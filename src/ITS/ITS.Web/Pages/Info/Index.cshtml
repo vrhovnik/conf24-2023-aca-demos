@@ -1,0 +1,23 @@
+﻿@page
+@model IndexPageModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<h1>
+    Basic information about the Issue Tracking System
+    
+    @if (!string.IsNullOrEmpty(Model.ServerName))
+    {
+        <small>- running on @Model.ServerName</small>    
+    }
+</h1>
+
+<p class="text-info">
+    Source code is available for download
+</p>
+<a class="btn btn-light btn-lg"
+   href="https://github.com/vrhovnik/"
+   target="_blank">
+    here <i class="fas fa-arrow-down"></i>
+</a>
