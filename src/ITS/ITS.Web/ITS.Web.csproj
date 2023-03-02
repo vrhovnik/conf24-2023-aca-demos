@@ -17,4 +17,10 @@
       <Folder Include="Pages\User" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ITS.Core\ITS.Core.csproj" />
+      <ProjectReference Include="..\ITS.Interfaces\ITS.Interfaces.csproj" />
+      <ProjectReference Include="..\ITS.Models\ITS.Models.csproj" />
+    </ItemGroup>
+
 </Project>

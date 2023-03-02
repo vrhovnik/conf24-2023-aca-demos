@@ -14,7 +14,7 @@ public class IndexPageModel : PageModel
     {
         logger.LogInformation("Main info page has been loaded at {CurrentDateTime}", DateTime.Now);
         ServerName = Environment.MachineName;
-        logger.LogInformation("Received {QOTD}", ServerName);
+        logger.LogInformation("Received {ServerName}", ServerName);
     }
 
     [BindProperty] public string ServerName { get; set; } = "";
