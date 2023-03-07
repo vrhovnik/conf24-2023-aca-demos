@@ -1,0 +1,101 @@
+create table Category
+(
+    CategoryId int identity
+        constraint Category_pk
+            primary key,
+    Name       nvarchar(max) not null
+)
+go
+
+create table Tags
+(
+    TagName nvarchar(200) not null
+        constraint Tags_pk
+            primary key
+)
+go
+
+exec sp_addextendedproperty 'MS_Description', 'tag table', 'SCHEMA', 'dbo', 'TABLE', 'Tags'
+go
+
+create unique index Tags_TagName_uindex
+    on Tags (TagName)
+go
+
+create table Users
+(
+    UserId   int identity
+        constraint Users_pk
+            primary key,
+    FullName nvarchar(max) not null,
+    Email    nvarchar(max) not null,
+    Password nvarchar(max) not null
+)
+go
+
+create table UserSetting
+(
+    UserSettingId     int identity
+        constraint UserSetting_pk
+            primary key,
+    UserId            int
+        constraint UserSetting_Users_UserId_fk
+            references Users,
+    EmailNotification bit default 0
+)
+go
+
+create table WorkTask2Tags
+(
+    WorkTaskId int           not null,
+    TagName    nvarchar(200) not null,
+    constraint WorkTask2Tags_pk
+        primary key (WorkTaskId, TagName)
+)
+go
+
+exec sp_addextendedproperty 'MS_Description', 'work items and tags', 'SCHEMA', 'dbo', 'TABLE', 'WorkTask2Tags'
+go
+
+create table WorkTasks
+(
+    WorkTaskId  int identity
+        constraint WorkTasks_pk
+            primary key,
+    Description nvarchar(max) not null,
+    CategoryId  int
+        constraint WorkTasks_Category_CategoryId_fk
+            references Category,
+    StartDate   datetime,
+    EndDate     datetime,
+    UserId      int
+        constraint WorkTasks_Users_UserId_fk
+            references Users,
+    IsPublic    bit
+)
+go
+
+exec sp_addextendedproperty 'MS_Description', 'task on which we are working on', 'SCHEMA', 'dbo', 'TABLE', 'WorkTasks'
+go
+
+create table WorkTaskComments
+(
+    WorkTaskCommentId         int identity
+        constraint WorkTaskComments_pk
+            primary key nonclustered,
+    UserId                    int      not null
+        constraint WorkTaskComments_Users_UserId_fk
+            references Users,
+    WorkTaskId                int      not null
+        constraint WorkTaskComments_WorkTasks_WorkTaskId_fk
+            references WorkTasks,
+    Comment                   nvarchar(max),
+    StartDate                 datetime not null,
+    PreviousWorkTaskCommentId int
+)
+go
+
+create unique index WorkTaskComments_WorkTaskCommentId_uindex
+    on WorkTaskComments (WorkTaskCommentId)
+go
+
