@@ -1,0 +1,81 @@
+﻿@page "{workTaskId}"
+@model DetailsPageModel
+
+@{
+    ViewData["Title"] = "Details for task";
+}
+
+@if (string.IsNullOrEmpty(Model.Message))
+{
+    <p class="text-warning">@Model.Message</p>
+}
+
+@section breadcrumb
+{
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/User/Dashboard">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Tasks/Index">Tasks search page</a>
+        </li>
+        <li aria-current="page"
+            class="breadcrumb-item active">
+            Work task overview
+        </li>
+    </ol>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container">
+        <div class="float-end mb-2 mt-2">
+            <a class="btn btn-info"
+               target="_blank">
+                Export to PDF <i class="fa-solid fa-file-pdf"></i>
+            </a>
+        </div>
+    </div>
+}
+<h1>Work task in category @Model.WorkTask.Category.Name</h1>
+<p class="fs-6">@Model.WorkTask.Description</p>
+<dl class="row">
+    <dt class="col-sm-3">Created</dt>
+    <dd class="col-sm-9">@Model.WorkTask.Start.ToShortDateString()</dd>
+    <dt class="col-sm-3">Number of comments</dt>
+    <dd class="col-sm-9">@Model.WorkTask.Comments.Count</dd>
+    <dt class="col-sm-3">Is publically available</dt>
+    <dd class="col-sm-9">
+        @if (Model.WorkTask.IsPublic)
+        {
+            <i class="fa-solid fa-check"></i>
+        }
+        else
+        {
+            <i class="fa-solid fa-xmark"></i>
+        }
+    </dd>
+</dl>
+
+@if (Model.WorkTask.Comments.Any())
+{
+    <h5>Loaded @Model.WorkTask.Comments.Count comments</h5>
+    @await Html.PartialAsync("_WorkTaskComments", Model.WorkTask.Comments)
+}
+<hr class="m-lg-3"/>
+@if (User.Identity.IsAuthenticated)
+{
+    <form method="post">
+        <div class="mb-3">
+            <label asp-for="NewComment.Comment">Enter your comment</label>
+            <input asp-for="NewComment.Comment"
+                   class="form-control"
+                   required="required"
+                   type="textarea">
+        </div>
+        <button class="btn btn-primary mr-2"
+                type="submit">
+            Add your thoughts <i class="fas fa-save"></i>
+        </button>
+    </form>
+}

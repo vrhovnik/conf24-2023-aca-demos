@@ -1,0 +1,142 @@
+﻿@page "{workTaskId}"
+@model EditPageModel
+
+@{
+    ViewData["Title"] = "Edit task";
+}
+
+@section breadcrumb
+{
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/User/Dashboard">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Tasks/Index">Tasks search page</a>
+        </li>
+        <li aria-current="page"
+            class="breadcrumb-item active">
+            Edit task
+        </li>
+    </ol>
+}
+
+@if (string.IsNullOrEmpty(Model.Message))
+{
+    <p class="text-warning">@Model.Message</p>
+}
+<h1>Edit task @Model.EditTask.WorkTaskId</h1>
+
+<form enctype="multipart/form-data"
+      method="post">
+    <input asp-for="EditTask.WorkTaskId"
+           type="hidden" />
+    <div class="mb-3">
+        <label asp-for="EditTask.Description">Enter description</label>
+        <input asp-for="EditTask.Description"
+               class="form-control"
+               required="required"
+               type="textarea">
+    </div>
+    <div class="mb-3">
+        <label asp-for="EditTask.Start">Enter start date</label>
+        <input asp-for="EditTask.Start"
+               class="form-control"
+               required="required"
+               type="date">
+    </div>
+    <div class="mb-3">
+        <label asp-for="EditTask.End">Enter end date</label>
+        <input asp-for="EditTask.End"
+               class="form-control"
+               type="date">
+    </div>
+    <div class="form-check mb-2">
+        <input asp-for="EditTask.IsPublic"
+               class="form-check-input"
+               type="checkbox">
+        <label asp-for="EditTask.IsPublic"
+               class="form-check-label">
+            Is publicly available
+        </label>
+    </div> 
+    <div class="form-check mb-2">
+        <input asp-for="EditTask.IsCompleted"
+               class="form-check-input"
+               type="checkbox">
+        <label asp-for="EditTask.IsCompleted"
+               class="form-check-label">
+            Is completed?
+        </label>
+    </div>
+    <div class="mb-3">
+        <label asp-for="EditTask.Category">Choose category</label>
+        <select asp-for="EditTask.Category"
+                class="form-control"
+                id="ddlCategories"
+                name="ddlCategories">
+            @foreach (var category in Model.Categories)
+            {
+                if (category.CategoryId == Model.EditTask.Category.CategoryId)
+                {
+                    <option selected="selected"
+                            value="@category.CategoryId">
+                        @category.Name
+                    </option>
+                }
+                else
+                {
+                    <option value="@category.CategoryId">@category.Name</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="EditTask.Tags">Choose tags</label>
+        <select asp-for="EditTask.Category"
+                class="form-control"
+                id="ddlTags"
+                multiple="multiple"
+                name="ddlTags">
+            @foreach (var tag in Model.Tags)
+            {
+                if (Model.EditTask.Tags.Any(currentTag => currentTag.TagName == tag.TagName))
+                {
+                    <option selected="selected"
+                            value="@tag.TagName">
+                        @tag.TagName
+                    </option>
+                }
+                else
+                {
+                    <option value="@tag.TagName">@tag.TagName</option>
+                }
+            }
+        </select>
+    </div>
+
+    <button class="btn btn-primary mr-2"
+            type="submit">
+        Save <i class="fas fa-save"></i>
+    </button>
+    <a asp-page="/User/Dashboard">Cancel</a>
+
+</form>
+
+@section Head
+{
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+          rel="stylesheet" />
+}
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#ddlTags').select2({
+            placeholder: 'Click here and select tags by clicking on tag'
+        });
+    });
+    </script>
+}

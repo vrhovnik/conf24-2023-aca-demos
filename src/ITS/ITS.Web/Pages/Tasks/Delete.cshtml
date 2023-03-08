@@ -1,0 +1,39 @@
+﻿@page "{workTaskId}"
+@model DeletePageModel
+
+@{
+    ViewData["Title"] = "Delete task ";
+}
+
+@section breadcrumb
+{
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-page="/User/Dashboard">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-page="/Tasks/Index">Tasks search page</a>
+    </li>
+    <li aria-current="page"
+        class="breadcrumb-item active">
+        Delete task @Model.WorkTaskId
+    </li>
+</ol>
+}
+
+@if (string.IsNullOrEmpty(Model.Message))
+{
+    <p class="text-warning">@Model.Message</p>
+}
+
+<h1>Deleting work @Model.WorkTaskId task with description</h1>
+
+<p>@Model.WorkTask.Description</p>
+
+<form method="post">
+    <button class="btn btn-danger btn-lg"
+            type="submit">
+        Delete work task @Model.WorkTaskId and all associated connections?
+    </button>
+    <a asp-page="/User/Dashboard">Cancel</a>
+</form>

@@ -1,0 +1,158 @@
+﻿@using ITS.Core
+@using ITS.Web.Options
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.Extensions.Options
+@model ITS.Core.PaginatedList<ITS.Models.WorkTask>
+@inject IOptions<GeneralWebOptions> WebSettings
+@if (Model.Any())
+{
+    <div id="grid">
+        <table class="table table-light table-hover"
+               id="tbData">
+            <caption>
+                <p>Task list for query <b>@Model.Query</b></p>
+                <b>Public</b>: <i class="fa-solid fa-check"></i><br>
+                <b>Private</b>: <i class="fa-solid fa-xmark"></i><br>
+                <b>Completed</b>: <i class="fa-solid fa-thumbs-up"></i><br>
+                <b>Not completed</b>: <i class="fa-solid fa-thumbs-down"></i>
+            </caption>
+            <thead class="thead-dark">
+            <tr>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Duration
+                </th>
+                <th>Category</th>
+                <th>Tags</th>
+                <th>Completed</th>
+                <th>...</th>
+            </tr>
+            </thead>
+            @foreach (var workTask in Model)
+            {
+                <tr>
+                    <td>
+                        <input name="workTaskId"
+                               type="hidden"
+                               value="@workTask.WorkTaskId" />
+                        @if (workTask.IsPublic)
+                        {
+                            <i class="fa-solid fa-check"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-xmark"></i>
+                        }
+                        <a asp-page="/Tasks/Details"
+                           asp-route-workTaskId="@workTask.WorkTaskId">
+                            @workTask.Description.Truncate(25)
+                        </a>
+                    </td>
+                    <td class="text-center">@workTask.Duration</td>
+                    <td>@workTask.Category.Name</td>
+                    <td>
+                        @foreach (var modelTag in workTask.Tags)
+                        {
+                            <span class="badge bg-info">@modelTag.TagName</span>
+                            @:&nbsp;
+                        }
+                    </td>
+                    <td>
+                        @if (workTask.IsCompleted)
+                        {
+                            <i class="fa-solid fa-thumbs-up"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-thumbs-down"></i>
+                        }
+                    </td>
+                    <td>
+                        @if (!workTask.IsCompleted)
+                        {
+                            <a hx-confirm="Are you sure you wish to complete the task?"
+                               hx-include="[name='workTaskId']"
+                               hx-post="@WebSettings.Value.ClientApiUrl/task-api/complete-task">
+                                <input name="workTaskId"
+                                       type="hidden">
+                                <i class="fa-solid fa-check"></i>
+                            </a>
+                        }
+                        &nbsp;
+                        <a asp-page="/Tasks/Edit"
+                           asp-route-workTaskId="@workTask.WorkTaskId">
+                            <i class="fas fa-edit"></i>
+                        </a>&nbsp;
+                        &nbsp;
+                        <a asp-page="/Tasks/Delete"
+                           asp-route-workTaskId="@workTask.WorkTaskId">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+        <nav>
+            <ul class="pagination">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    @if (Model.PageIndex - 1 < 1)
+                    {
+                        <a asp-route-pageNumber="1"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            Previous
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-route-pageNumber="@(Model.PageIndex - 1)"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            Previous
+                        </a>
+                    }
+                </li>
+                @for (var currentPageIndex = 1; currentPageIndex <= Model.TotalPages; currentPageIndex++)
+                {
+                    <li class="page-item @(Model.PageIndex == currentPageIndex ? "active" : "")">
+                        <a asp-route-pageNumber="@currentPageIndex"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            @currentPageIndex
+                        </a>
+                    </li>
+                }
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    @if (Model.PageIndex + 1 < Model.TotalPages)
+                    {
+                        <a asp-route-pageNumber="@(Model.PageIndex + 1)"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            Next
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-route-pageNumber="@(Model.TotalPages)"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            Next
+                        </a>
+                    }
+                </li>
+            </ul>
+        </nav>
+    </div>
+}
+else
+{
+    <p class="text-info">
+        No data present based on selected filter.
+        @if (User.Identity is {IsAuthenticated: true })
+        {
+            @:Check filter or <a asp-page="/Tasks/Create"> Create new task</a>.
+        }
+    </p>
+}

@@ -1,0 +1,100 @@
+﻿@page
+@model CreatePageModel
+
+@{
+    ViewData["Title"] = "Add new task";
+}
+
+@section breadcrumb
+{
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/User/Dashboard">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Task/Index">Tasks search page</a>
+        </li>
+        <li aria-current="page"
+            class="breadcrumb-item active">
+            Create new task
+        </li>
+    </ol>
+}
+
+@if (string.IsNullOrEmpty(Model.Message))
+{
+    <p class="text-warning">@Model.Message</p>
+}
+<h1>Add new task</h1>
+
+<form enctype="multipart/form-data"
+      method="post">
+    <div class="mb-3">
+        <label asp-for="NewTask.Description">Enter description</label>
+        <input asp-for="NewTask.Description"
+               class="form-control"
+               required="required"
+               type="textarea">
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewTask.Start">Enter start date</label>
+        <input asp-for="NewTask.Start"
+               class="form-control"
+               value="@DateTime.Now"
+               required="required"
+               type="date">
+    </div>
+    <div class="form-check mb-2">
+        <input asp-for="NewTask.IsPublic"
+               class="form-check-input"
+               type="checkbox">
+        <label asp-for="NewTask.IsPublic"
+               class="form-check-label">
+            Is publicly available
+        </label>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewTask.Category">Choose category</label>
+        <select asp-for="NewTask.Category"
+                asp-items="@(new SelectList(Model.Categories, "CategoryId", "Name"))"
+                class="form-control"
+                id="ddlCategories"
+                name="ddlCategories">
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewTask.Tags">Choose tags</label>
+        <select asp-for="NewTask.Tags"
+                asp-items="@(new SelectList(Model.Tags, "TagName", "TagName"))"
+                class="form-control"
+                id="ddlTags"
+                multiple="multiple"
+                name="ddlTags">
+        </select>
+    </div>
+
+    <button class="btn btn-primary mr-2"
+            type="submit">
+        Save <i class="fas fa-save"></i>
+    </button>
+    <a asp-page="/Tasks/Index">Cancel</a>
+
+</form>
+
+@section Head
+{
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+          rel="stylesheet" />
+}
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#ddlTags').select2({
+            placeholder: 'Click here and select tags by clicking on tag'
+        });
+    });
+    </script>
+}

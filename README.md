@@ -38,7 +38,13 @@ If you will be working on your local machines, you will need to have:
 
 ## Demos
 
-TBD
+Demo is about simple issue tracking system (ITS) for managing work tasks. Stats about the system are on front page and
+are refreshed daily.
+Demo site enables you to add your work tasks and track their progress - you can specify online resources which are
+associated with links. You can add register into the system, add tasks,
+comment on tasks, collaborate and more. You can download list of tasks in PDF format and can associate online resources
+with tasks,
+which will get downloaded and stored in PDF for offline viewing and will generate reports with attached resources.
 
 # Additional information
 

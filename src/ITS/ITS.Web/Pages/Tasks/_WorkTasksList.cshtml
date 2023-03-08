@@ -1,0 +1,106 @@
+﻿@using ITS.Core
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ITS.Core.PaginatedList<ITS.Models.WorkTask>
+@if (Model.Any())
+{
+    <div id="grid">
+        <table class="table table-light table-hover"
+               id="tbData">
+            <caption>
+                Task list for query <b>@Model.Query</b> out of @Model.TotalItems
+            </caption>
+            <thead class="thead-dark">
+            <tr>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Duration
+                </th>
+                <th>Category</th>
+                <th>Tags</th>
+            </tr>
+            </thead>
+            @foreach (var workTask in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-page="/Tasks/Details"
+                           asp-route-workTaskId="@workTask.WorkTaskId">
+                            @workTask.Description.Truncate(50)
+                        </a>
+                    </td>
+                    <td class="text-center">@workTask.Duration</td>
+                    <td>@workTask.Category.Name</td>
+                    <td>
+                        @foreach (var modelTag in workTask.Tags)
+                        {
+                            <span class="badge bg-info">@modelTag.TagName</span>
+                            @:&nbsp;
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+        <nav>
+            <ul class="pagination">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    @if (Model.PageIndex - 1 < 1)
+                    {
+                        <a asp-route-pageNumber="1"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            Previous
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-route-pageNumber="@(Model.PageIndex - 1)"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            Previous
+                        </a>
+                    }
+                </li>
+                @for (var currentPageIndex = 1; currentPageIndex <= Model.TotalPages; currentPageIndex++)
+                {
+                    <li class="page-item @(Model.PageIndex == currentPageIndex ? "active" : "")">
+                        <a asp-route-pageNumber="@currentPageIndex"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            @currentPageIndex
+                        </a>
+                    </li>
+                }
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    @if (Model.PageIndex + 1 < Model.TotalPages)
+                    {
+                        <a asp-route-pageNumber="@(Model.PageIndex + 1)"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            Next
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-route-pageNumber="@(Model.TotalPages)"
+                           asp-route-query="@Model.Query"
+                           class="page-link">
+                            Next
+                        </a>
+                    }
+                </li>
+            </ul>
+        </nav>
+    </div>
+}
+else
+{
+    <p class="text-info">
+        No data present based on selected filter. Check filter.
+        @if (User.Identity.IsAuthenticated)
+        {
+            @:Or <a asp-page="/Tasks/Create"> Create new task</a>.
+        }
+    </p>
+}

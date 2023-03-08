@@ -1,0 +1,63 @@
+﻿@page
+@model RegisterPageModel
+
+@{
+    ViewData["Title"] = "Register new user";
+}
+@if (string.IsNullOrEmpty(Model.Message))
+{
+    <p class="text-warning">@Model.Message</p>
+}
+<h1>Register new account to access and work with your tasks</h1>
+
+<p>Enter below information to access data.</p>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="NewUser.FullName"
+               class="form-label">
+            Fullname
+        </label>
+        <input asp-for="NewUser.FullName"
+               class="form-control"
+               placeholder="John Snow"
+               type="text">
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewUser.Email"
+               class="form-label">
+            Email address
+        </label>
+        <input asp-for="NewUser.Email"
+               class="form-control"
+               placeholder="name@example.com"
+               type="email">
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewUser.Password"
+               class="form-label">
+            Enter password
+        </label>
+        <input asp-for="NewUser.Password"
+               class="form-control"
+               placeholder="Star_Wars_Rules_123_!"
+               type="password">
+    </div>
+    <div class="form-check mb-2">
+        <input asp-for="NewUser.UserSettings.EmailNotification"
+               class="form-check-input"
+               type="checkbox"
+               value="">
+        <label asp-for="NewUser.UserSettings.EmailNotification"
+               class="form-check-label">
+            Notify me via email
+        </label>
+    </div>
+    <button class="btn btn-primary"
+            type="submit">
+        Register new user
+    </button>
+    <a asp-page="/User/Login">
+        I remembered username, let me login
+    </a>
+</form>

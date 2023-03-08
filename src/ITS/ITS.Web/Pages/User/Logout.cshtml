@@ -1,0 +1,15 @@
+﻿@page
+@model LogoutPageModel
+
+@{
+    ViewData["Title"] = "Logged out";
+}
+
+@if (string.IsNullOrEmpty(Model.Message))
+{
+    <p class="text-warning">@Model.Message</p>
+}
+
+<h2>You have been log out from the ITS system at @DateTime.Now</h2>
+
+<p>If that was a mistake, use <a asp-page="/User/Login">log in page to</a> access system again.</p>

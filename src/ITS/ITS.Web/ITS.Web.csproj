@@ -6,21 +6,22 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
-
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Pages\User" />
+        <PackageReference Include="Htmx" Version="1.0.1" />
+        <PackageReference Include="Htmx.TagHelpers" Version="1.0.1" />
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+        <PackageReference Include="QuestPDF" Version="2022.12.1" />
+        <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="1.17.0" />
+        <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.17.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\ITS.Core\ITS.Core.csproj" />
       <ProjectReference Include="..\ITS.Interfaces\ITS.Interfaces.csproj" />
       <ProjectReference Include="..\ITS.Models\ITS.Models.csproj" />
+      <ProjectReference Include="..\ITS.SQL\ITS.SQL.csproj" />
     </ItemGroup>
 
 </Project>

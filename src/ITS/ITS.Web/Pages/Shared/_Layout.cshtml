@@ -7,12 +7,11 @@
     <title>@ViewData["Title"]</title>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css"
           rel="stylesheet" />
-    <link asp-append-version="true"
-          href="~/css/site.css"
+    <link href="~/css/site.css"
           rel="stylesheet" />
-    <link asp-append-version="true"
-          href="~/ITS.Web.styles.css"
-          rel="stylesheet" />
+    <script data-auto-replace-svg="nest"
+            src="https://use.fontawesome.com/releases/v6.1.1/js/all.js"></script>
+    @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
 <header>
@@ -43,17 +42,56 @@
                     </li>
                     <li class="nav-item">
                         <a asp-area=""
-                           asp-page="/Privacy"
+                           asp-page="/Tasks/Index"
                            class="nav-link text-dark">
-                            Privacy
+                            Tasks
                         </a>
                     </li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a asp-area=""
+                               asp-page="/Tasks/Create"
+                               class="nav-link text-dark">
+                                Add new
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
+            <form class="form-inline my-2 my-lg-0">
+                <div class="mr-2"
+                     id="alertDiv">
+                </div>
+                @if (User.Identity is {IsAuthenticated: true })
+                {
+                    <span class="font-weight-bolder mr-2">Welcome</span>
+                    <a asp-page="/User/Dashboard"
+                       class="font-weight-bolder mr-1">
+                        @User.Identity.Name
+                    </a>
+                    <a asp-page="/User/Logout"
+                       class="text-dark ml-1 btn btn-light">
+                        Log me out!
+                    </a>
+                }
+                else
+                {
+                    <a asp-page="/User/Login">Login</a>
+                }
+            </form>
         </div>
     </nav>
 </header>
 <div class="container">
+    @if (IsSectionDefined("breadcrumb"))
+    {
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                @await RenderSectionAsync("breadcrumb")
+            </ol>
+        </nav>
+    }
     <main class="pb-3"
           role="main">
         @RenderBody()
@@ -62,19 +100,15 @@
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2023 - ITS
-        <a asp-area=""
-           asp-page="/Privacy">
+        &copy; 2023 - ITS (Source code
+        <a href="https://github.com/vrhovnik/conf24-2023-aca-demos"
+           target="_blank">here</a>) | <a asp-area="" asp-page="/Privacy">
             Privacy
         </a>
     </div>
 </footer>
-
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script asp-append-version="true"
-        src="~/js/site.js"></script>
-
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

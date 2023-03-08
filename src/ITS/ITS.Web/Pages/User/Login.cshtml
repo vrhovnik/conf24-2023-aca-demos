@@ -1,0 +1,80 @@
+﻿@page
+@model LoginPageModel
+
+@{
+    ViewData["Title"] = "Login form";
+}
+
+<h1>Login to the ITS system</h1>
+
+<p>Use below form to login to the system. Username and password is <b>mandatory</b> fields.</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="LoginData.Email"
+                           class="form-label">
+                        Enter email
+                    </label>
+                    <input asp-for="LoginData.Email"
+                           class="form-control"
+                           placeholder="john.snow@dragoncave.com"
+                           type="email">
+                </div>
+                <div class="mb-3">
+                    <label asp-for="LoginData.Password"
+                           class="form-label">
+                        Enter Password
+                    </label>
+                    <input asp-for="LoginData.Password"
+                           class="form-control"
+                           placeholder="john.snow@dragoncave.com"
+                           type="password">
+                </div>
+                <button class="btn btn-primary"
+                        type="submit">
+                    Login me in
+                </button>
+                <a asp-page="/User/Register">Don't have account, register new user</a>
+            </form>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-light mb-3"
+                 style="max-width: 18rem;">
+                <div class="card-header">Checkout this resources</div>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">All are publicly available</h6>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a class="card-link"
+                               href="https://github.com/vrhovnik/conf24-2023-aca-demos"
+                               target="_blank">
+                                Source code
+                            </a>
+                        </li>
+                        <li>
+                            <a class="card-link"
+                               href="https://www.azure.com"
+                               target="_blank">
+                                Azure
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-page="/Tasks/Index"
+                               class="card-link">
+                                Public task list
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://learn.microsoft.com/en-us/azure/container-apps/"
+                               class="card-link">
+                                Azure Container Apps
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

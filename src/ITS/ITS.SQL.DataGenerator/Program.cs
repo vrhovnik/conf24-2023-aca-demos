@@ -97,7 +97,6 @@ await AnsiConsole.Status()
         var tags = await GetDataFromFileAsync("data/tag.data");
         ctx.Status("Reading from file data/tag.data");
         ctx.Refresh();
-
         await sqlHelper.LoadTagsAsync(tags, ctx);
 
         //2. Categories

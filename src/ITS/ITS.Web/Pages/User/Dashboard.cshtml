@@ -1,0 +1,53 @@
+﻿@page  "{pageNumber=1}/{query?}"
+@using ITS.Web.Base
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model DashboardPageModel
+@inject IUserDataContext userDataContext
+
+@{
+    var currentUser = userDataContext.GetCurrentUser();
+    var identityName = currentUser.Fullname;
+    ViewData["Title"] = "Dashboard " + identityName;
+}
+@if (string.IsNullOrEmpty(Model.Message))
+{
+    <p class="text-warning">@Model.Message</p>
+}
+
+<h1>Dashboard for @identityName</h1>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container">
+        <div class="float-end mb-2 mt-2">
+            <button class="btn btn-light"
+                    hx-get="@Model.PdfDownloadUrl">
+                Download PDF <i class="fa-solid fa-file-pdf"></i>
+            </button>
+            <a asp-page="/Tasks/Create"
+               class="btn btn-success">
+                Create new task <i class="fas fa-plus"></i>
+            </a>
+        </div>
+    </div>
+}
+<div class="container">
+    <input aria-label="search term"
+           class="form-control"
+           hx-get
+           hx-swap="outerHtml"
+           hx-target="#grid"
+           hx-trigger="keyup changed delay:300ms"
+           id="tbQuery"
+           name="query"
+           placeholder="enter search term"
+           type="text">
+</div>
+<div class="container mt-2">
+    @await Html.PartialAsync("_UserWorkTasksList", Model.UserTasks)
+</div>
+
+@section Scripts
+{
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
+}
