@@ -19,21 +19,40 @@ public class WorkTaskRepository : BaseRepository<WorkTask>, IWorkTaskRepository
         var query =
             "SELECT W.WorkTaskId, W.IsCompleted, W.StartDate as [Start], W.EndDate as [End],W.IsPublic, W.Description, W.CategoryId," +
             "W.UserId as ItsUserId FROM WorkTasks W WHERE W.WorkTaskId=@entityId;" +
-            "SELECT U.* FROM Users U JOIN WorkTasks FFT on FFT.UserId=U.UserId WHERE FFT.WorkTaskId=@entityId;" +
+            "SELECT U.UserId as ItsUserId, U.FullName, U.Email, U.Password FROM Users U JOIN WorkTasks FFT on FFT.UserId=U.UserId WHERE FFT.WorkTaskId=@entityId;" +
             "SELECT C.* FROM Categories C JOIN WorkTasks FF on FF.CategoryId=C.CategoryId WHERE FF.WorkTaskId=@entityId;" +
-            "SELECT F.* FROM Tags F JOIN WorkTask2Tags WT on WT.TagName=F.TagName WHERE WT.WorkTaskId=@entityId;" +
-            "SELECT WTC.* FROM WorkTaskComments WTC WHERE WTC.WorkTaskId=@entityId ORDER BY WTC.StartDate DESC;";
+            "SELECT F.* FROM Tags F JOIN WorkTask2Tags WT on WT.TagName=F.TagName WHERE WT.WorkTaskId=@entityId;";
 
         var result = await connection.QueryMultipleAsync(query, new { entityId });
         var workTask = await result.ReadSingleAsync<WorkTask>();
         workTask.User = await result.ReadSingleAsync<ItsUser>();
         workTask.Category = await result.ReadSingleAsync<Category>();
         workTask.Tags = (await result.ReadAsync<Tag>()).ToList();
-        workTask.Comments = (await result.ReadAsync<WorkTaskComment>()).ToList();
 
-        if (workTask.Comments.Count == 0)
-            throw new ApplicationException("Commenting is required to be added into the system.");
+        //get all comments with associated users and work tasks
+        query =
+            "SELECT WTC.WorkTaskCommentId, WTC.Comment,WTC.StartDate, WTC.UserId as ItsUserId,  " +
+            "U.FullName,U.Email,WTC.WorkTaskId " +
+            "FROM WorkTaskComments WTC " +
+            "JOIN dbo.Users U on WTC.UserId = U.UserId " +
+            "WHERE WTC.WorkTaskId=@entityId ORDER BY WTC.StartDate DESC;" +
+            "SELECT U.FullName,U.UserId as ItsUserId, U.Email FROM Users U JOIN WorkTaskComments FFT on FFT.UserId=U.UserId WHERE FFT.WorkTaskId=@entityId";
 
+        var grid = await connection.QueryMultipleAsync(query, new { entityId });
+        var lookup = new Dictionary<string, WorkTaskComment>();
+
+        grid.Read<WorkTaskComment, ItsUser, WorkTaskComment>((workTaskComment, user) =>
+        {
+            workTaskComment.User = user;
+            workTaskComment.AssignedTask = workTask;
+
+            if (!lookup.TryGetValue(workTaskComment.WorkTaskCommentId, out _))
+                lookup.Add(workTaskComment.WorkTaskCommentId, workTaskComment);
+
+            return workTaskComment;
+        }, splitOn: "ItsUserId");
+
+        workTask.Comments = lookup.Values.ToList();
         return workTask;
     }
 
@@ -136,7 +155,7 @@ public class WorkTaskRepository : BaseRepository<WorkTask>, IWorkTaskRepository
         if (!string.IsNullOrEmpty(query)) sqlQuery += $" AND T.Description LIKE '%{query}%'";
 
         sqlQuery += " ORDER BY T.IsCompleted DESC";
-        
+
         var grid = await connection.QueryMultipleAsync(sqlQuery, new { userIdentificator });
         var user = await grid.ReadSingleAsync<ItsUser>();
         var lookup = new Dictionary<string, WorkTask>();

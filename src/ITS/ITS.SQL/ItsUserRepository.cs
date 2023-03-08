@@ -41,7 +41,7 @@ public class ItsUserRepository : BaseRepository<ItsUser>, IUserRepository
     public override async Task<ItsUser> DetailsAsync(string entityId)
     {
         await using var connection = new SqlConnection(connectionString);
-        var query = "SELECT U.UserId as TTAUserId, U.FullName, U.Email, U.Password FROM Users U WHERE U.UserId=@entityId;" +
+        var query = "SELECT U.UserId as ItsUserId, U.FullName, U.Email, U.Password FROM Users U WHERE U.UserId=@entityId;" +
                     "SELECT T.* FROM WorkTasks T JOIN WorkTask2Tags FF on FF.WorkTaskId=T.WorkTaskId WHERE T.UserId=@entityId;" +
                     "SELECT F.* FROM UserSetting F WHERE F.UserId=@entityId;";
 

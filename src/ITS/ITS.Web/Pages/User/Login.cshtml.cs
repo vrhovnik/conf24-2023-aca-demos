@@ -19,10 +19,7 @@ public class LoginPageModel : BasePageModel
         this.userRepository = userRepository;
     }
 
-    public void OnGet()
-    {
-        logger.LogInformation("Load page at {DateLoaded}", DateTime.Now);
-    }
+    public void OnGet() => logger.LogInformation("Load page at {DateLoaded}", DateTime.Now);
 
     public async Task<IActionResult> OnPostAsync()
     {

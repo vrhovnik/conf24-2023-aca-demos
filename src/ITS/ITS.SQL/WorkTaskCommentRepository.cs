@@ -59,8 +59,12 @@ public class WorkTaskCommentRepository : BaseRepository<WorkTaskComment>, IWorkT
         workTask.Tags = (await result.ReadAsync<Tag>()).ToList();
 
         query =
-            "SELECT WTC.WorkTaskCommentId, WTC.Comment,WTC.StartDate, WTC.UserId,WTC.WorkTaskId FROM WorkTaskComments WTC WHERE WTC.WorkTaskId=@entityId ORDER BY WTC.DateStarted DESC;" +
-            "SELECT U.FullName,U.UserId as ItsUserId, T.Email FROM Users U JOIN WorkTaskComments FFT on FFT.UserId=U.UserId WHERE FFT.WorkTaskId=@workTaskId";
+            "SELECT WTC.WorkTaskCommentId, WTC.Comment,WTC.StartDate, WTC.UserId as ItsUserId,  " +
+            "U.FullName,U.Email,WTC.WorkTaskId " +
+            "FROM WorkTaskComments WTC " +
+            "JOIN dbo.Users U on WTC.UserId = U.UserId " +
+            "WHERE WTC.WorkTaskId=@workTaskId ORDER BY WTC.StartDate DESC;" +
+            "SELECT U.FullName,U.UserId as ItsUserId, U.Email FROM Users U JOIN WorkTaskComments FFT on FFT.UserId=U.UserId WHERE FFT.WorkTaskId=@workTaskId";
 
         var grid = await connection.QueryMultipleAsync(query, new { workTaskId });
         var lookup = new Dictionary<string, WorkTaskComment>();

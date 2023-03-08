@@ -39,8 +39,7 @@ public class DetailsPageModel : BasePageModel
             var user = userDataContext.GetCurrentUser();
             logger.LogInformation("Adding user {FullName} to comment for worktask {WorkTaskId}", user.Fullname,
                 WorkTaskId);
-            WorkTask.User = new ItsUser { ItsUserId = user.UserId };
-            
+            NewComment.User = new ItsUser { ItsUserId = user.UserId };
             await workTaskCommentRepository.InsertAsync(NewComment);
             
             logger.LogInformation("Comment was added for worktask {WorkTaskId}", WorkTaskId);
