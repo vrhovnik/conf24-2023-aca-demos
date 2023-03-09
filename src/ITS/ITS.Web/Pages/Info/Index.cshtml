@@ -13,12 +13,46 @@
     }
 </h1>
 
-<p>
-Demo is about simple issue tracking system (ITS) for managing work tasks. Stats about the system are on front page and
-are refreshed daily.
-Demo site enables you to add your work tasks and track their progress - you can specify online resources which are
-associated with links. You can add register into the system, add tasks,
-comment on tasks, collaborate and more. You can download list of tasks in PDF format and can associate online resources
-with tasks,
-which will get downloaded and stored in PDF for offline viewing and will generate reports with attached resources.
-<p>
+<div class="container">
+    <div class="row">
+        @if (User.Identity.IsAuthenticated)
+        {
+            if (Model.CurrentUserStats != null)
+            {
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            @User.Identity.Name quick stats
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Active tasks (@Model.CurrentUserStats.ActiveTasks)</li>
+                            <li class="list-group-item">Closed tasks (@Model.CurrentUserStats.ClosedTasks)</li>
+                            <li class="list-group-item">Public tasks (@Model.CurrentUserStats.PublicTasks)</li>
+                            <li class="list-group-item">Comments No. (@Model.CurrentUserStats.NumberOfComments)</li>
+                        </ul>
+                        @if (Model.CurrentUserStats.MostActiveTask != null)
+                        {
+                            <div class="card-body">
+                                <a asp-page="/Tasks/Details"
+                                   asp-route-workTaskId="@Model.CurrentUserStats.MostActiveTask.WorkTaskId"
+                                   class="card-link">
+                                    Most active task (@Model.CurrentUserStats.MostActiveTask.Category.Name)
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        <div class="col">
+            <p>
+            Demo is about simple i<b>ssue tracking system (ITS)</b> for managing work tasks. Stats about the system are on front page and
+            are refreshed daily.
+            Demo site enables you to add your work tasks and track their progress - you can specify online resources which are
+            associated with links. You can add register into the system, add tasks,
+            comment on tasks, collaborate and more. You can download list of tasks in PDF format and can associate online resources
+            with tasks,which will get downloaded and stored in PDF for offline viewing and will generate reports with attached resources.
+            <p>
+        </div>
+    </div>
+</div>

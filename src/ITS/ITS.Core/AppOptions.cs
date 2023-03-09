@@ -1,12 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace ITS.Core;
 
-namespace ITS.Core;
-
-public class AppOptions : BaseSettings 
+public class AppOptions 
 {
-    public AppOptions() => SectionName = nameof(AppOptions);
     public string DefaultEmailFrom { get; set; }
-    [Required(ErrorMessage = "Hash Salt is required in order to call API correctly")]
-    public string HashSalt { get; set; }
-    public int PageCount { get; set; }
+    public int PageCount { get; set; } = 15;
 }

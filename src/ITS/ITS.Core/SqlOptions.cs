@@ -2,10 +2,8 @@
 
 namespace ITS.Core;
 
-public class SqlOptions : BaseSettings 
+public class SqlOptions 
 {
-    public SqlOptions() => SectionName = nameof(SqlOptions);
-
     [Required]
     public string ConnectionString { get; set; }
 }

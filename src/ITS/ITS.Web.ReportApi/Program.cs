@@ -6,19 +6,20 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOptions<AppOptions>()
-    .Bind(builder.Configuration.GetSection(AppOptions.SectionName))
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.AppOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
-builder.Services.AddOptions<AppOptions>()
-    .Bind(builder.Configuration.GetSection(AppOptions.SectionName))
+builder.Services.AddOptions<SqlOptions>()
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.SqlOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 builder.Services.AddOptions<AuthOptions>()
-    .Bind(builder.Configuration.GetSection(AuthOptions.SectionName))
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.AuthOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-var sqlOptions = builder.Configuration.GetSection(SqlOptions.SectionName).Get<SqlOptions>();
+var sqlOptions = builder.Configuration.GetSection(SectionNameConsts.SqlOptionsSectionName)
+    .Get<SqlOptions>();
 builder.Services.AddTransient<IUserRepository, ItsUserRepository>(_ =>
     new ItsUserRepository(sqlOptions.ConnectionString));
 builder.Services.AddTransient<IWorkTaskRepository, WorkTaskRepository>(_ =>

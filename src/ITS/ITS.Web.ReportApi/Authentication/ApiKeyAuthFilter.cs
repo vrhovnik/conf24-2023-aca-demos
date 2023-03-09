@@ -15,10 +15,7 @@ public class ApiKeyAuthFilter : IAuthorizationFilter
 {
     private readonly IConfiguration configuration;
 
-    public ApiKeyAuthFilter(IConfiguration configuration)
-    {
-        this.configuration = configuration;
-    }
+    public ApiKeyAuthFilter(IConfiguration configuration) => this.configuration = configuration;
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
@@ -28,7 +25,10 @@ public class ApiKeyAuthFilter : IAuthorizationFilter
             return;
         }
 
-        var apiKey = configuration.GetValue<string>(AuthOptions.SectionName);
+        var apiKey = configuration
+            .GetSection(SectionNameConsts.AuthOptionsSectionName)
+            .Get<AuthOptions>()
+            .ApiKey;
         if (!apiKey.Equals(extractedApiKey))
             context.Result = new UnauthorizedObjectResult("Api Key is not valid");
     }

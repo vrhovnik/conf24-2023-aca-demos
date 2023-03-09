@@ -23,19 +23,19 @@ public class TaskApiController : BaseSqlController
     private readonly IWorkTaskRepository workTaskRepository;
     private readonly IWorkTaskCommentRepository workTaskCommentRepository;
     private readonly IUserRepository userRepository;
-    private readonly AppOptions webOptions;
+    private readonly AuthOptions authOptions;
     
     public TaskApiController(ILogger<TaskApiController> logger,
         IWorkTaskRepository workTaskRepository,
         IWorkTaskCommentRepository workTaskCommentRepository,
         IUserRepository userRepository,
-        IOptions<AppOptions> generalWebOption) 
+        IOptions<AuthOptions> authOptionValue) 
     {
         this.logger = logger;
         this.workTaskRepository = workTaskRepository;
         this.workTaskCommentRepository = workTaskCommentRepository;
         this.userRepository = userRepository;
-        webOptions = generalWebOption.Value;
+        authOptions = authOptionValue.Value;
     }
     
     [HttpGet]
@@ -52,7 +52,7 @@ public class TaskApiController : BaseSqlController
             return BadRequest("Specify user identification in order to get items");
         }
         
-        var hashids = new Hashids(webOptions.HashSalt);
+        var hashids = new Hashids(authOptions.HashSalt);
         if (!hashids.TryDecodeSingle(userId, out var itsUserId))
         {
             logger.LogError("User ID was not in correct format");
@@ -93,7 +93,7 @@ public class TaskApiController : BaseSqlController
             return BadRequest("Specify user identification in order to get PDF");
         }
         
-        var hashids = new Hashids(webOptions.HashSalt);
+        var hashids = new Hashids(authOptions.HashSalt);
         if (!hashids.TryDecodeSingle(userId, out var itsUserId))
         {
             logger.LogError("User ID was not in correct format");
@@ -177,6 +177,7 @@ public class TaskApiController : BaseSqlController
     [Route("app-health")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public override IActionResult CheckDbHealth()
     {
         var isAliveAsync = workTaskRepository.IsAlive();

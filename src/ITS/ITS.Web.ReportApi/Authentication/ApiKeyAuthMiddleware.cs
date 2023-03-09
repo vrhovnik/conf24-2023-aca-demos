@@ -23,14 +23,17 @@ public class ApiKeyAuthMiddleware
             return;
         }
 
-        var apiKey = configuration.GetValue<string>(AuthOptions.SectionName);
+        var apiKey = configuration
+            .GetSection(SectionNameConsts.AuthOptionsSectionName)
+            .Get<AuthOptions>()
+            .ApiKey;
         if (!apiKey.Equals(extractedApiKey))
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             await context.Response.WriteAsync("Invalid Api Key.");
             return;
         }
-        
+
         await next(context);
     }
 }

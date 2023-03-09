@@ -4,27 +4,37 @@ using ITS.Interfaces;
 using ITS.SQL;
 using ITS.Web.Base;
 using ITS.Web.Options;
+using ITS.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//configuring options
 builder.Services.AddOptions<AppOptions>()
-    .Bind(builder.Configuration.GetSection(AppOptions.SectionName))
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.AppOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
+
 builder.Services.AddOptions<ApiOptions>()
-    .Bind(builder.Configuration.GetSection(ApiOptions.SectionName))
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.ApiOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
+
 builder.Services.AddOptions<SqlOptions>()
-    .Bind(builder.Configuration.GetSection(SqlOptions.SectionName))
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.SqlOptionsSectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+builder.Services.AddOptions<AuthOptions>()
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.AuthOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
 //adding interface mappings for services connecting to SQL
-var sqlOptions = builder.Configuration.GetSection(SqlOptions.SectionName).Get<SqlOptions>();
+var sqlOptions = builder.Configuration.GetSection(SectionNameConsts.SqlOptionsSectionName)
+    .Get<SqlOptions>();
 builder.Services.AddTransient<IUserRepository, ItsUserRepository>(_ =>
     new ItsUserRepository(sqlOptions.ConnectionString));
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>(_ =>
@@ -38,24 +48,27 @@ builder.Services.AddTransient<IProfileSettingsService, ProfileSettingsService>(_
 builder.Services.AddTransient<IWorkTaskCommentRepository, WorkTaskCommentRepository>(_ =>
     new WorkTaskCommentRepository(sqlOptions.ConnectionString));
 
-builder.Services.AddScoped<IUserDataContext, UserDataContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 builder.Services.AddResponseCompression(options => options.Providers.Add<GzipCompressionProvider>());
 builder.Services.Configure<GzipCompressionProviderOptions>(compressionOptions =>
     compressionOptions.Level = CompressionLevel.Optimal);
 builder.Services.AddHealthChecks();
+
+builder.Services.AddScoped<IUserDataContext, UserDataContext>();
+builder.Services.AddHttpClient<ReportApiHttpService>();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options => options.LoginPath = new PathString("/User/Login"));
 builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
     options.Conventions.AddPageRoute("/Info/Index", ""));
+
 builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment()) app.UseExceptionHandler("/Error");
 
-//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();

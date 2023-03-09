@@ -1,7 +1,12 @@
-﻿namespace ITS.Core;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class AuthOptions : BaseSettings
+namespace ITS.Core;
+
+public class AuthOptions
 {
-    public AuthOptions() => SectionName = nameof(AuthOptions);
     public const string ApiKeyHeaderName = "X-Api-Key";
+    [Required(ErrorMessage = "Api key must be defined")] 
+    public string ApiKey { get; set; }
+    [Required(ErrorMessage = "Hash Salt is required in order to call API correctly")]
+    public string HashSalt { get; set; }
 }
