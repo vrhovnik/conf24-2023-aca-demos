@@ -78,7 +78,7 @@ var numberOfRecords = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("R
     ? AnsiConsole.Prompt(
         new TextPrompt<int>("Enter [green]record number[/] to generate")
             .PromptStyle("green"))
-    : int.Parse(Environment.GetEnvironmentVariable("RECORD_NUMBER"));
+    : int.Parse(Environment.GetEnvironmentVariable("RECORD_NUMBER")!);
 
 AnsiConsole.Write(new Markup($"Defined [bold yellow]{numberOfRecords}[/] record to be generated."));
 AnsiConsole.WriteLine();

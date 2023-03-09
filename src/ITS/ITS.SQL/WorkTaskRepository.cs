@@ -60,8 +60,8 @@ public class WorkTaskRepository : BaseRepository<WorkTask>, IWorkTaskRepository
     {
         await using var connection = new SqlConnection(connectionString);
         var item = await connection.ExecuteScalarAsync(
-            $"INSERT INTO WorkTasks(Description,CategoryId,StartDate, EndDate,UserId,IsPublic, IsCompleted)VALUES" +
-            $"(@description,@categoryId,@startDate,@endDate,@userId,@isPublic,@isCompleted);" +
+            "INSERT INTO WorkTasks(Description,CategoryId,StartDate, EndDate,UserId,IsPublic, IsCompleted)VALUES" +
+            "(@description,@categoryId,@startDate,@endDate,@userId,@isPublic,@isCompleted);" +
             "SELECT CAST(SCOPE_IDENTITY() as bigint)",
             new
             {
@@ -131,16 +131,40 @@ public class WorkTaskRepository : BaseRepository<WorkTask>, IWorkTaskRepository
 
         if (item < 0) return false;
 
-        await connection.ExecuteAsync("DELETE FROM WorkTask2Tags WHERE WHERE WorkTaskId=@workTaskId",
+        await connection.ExecuteAsync("DELETE FROM WorkTask2Tags WHERE WorkTaskId=@workTaskId",
             new { entityId });
 
-        await connection.ExecuteAsync("DELETE FROM WorkTaskComments WHERE WHERE WorkTaskId=@workTaskId",
+        await connection.ExecuteAsync("DELETE FROM WorkTaskComments WHERE WorkTaskId=@workTaskId",
             new { entityId });
 
         return true;
     }
 
-    public async Task<PaginatedList<WorkTask>> WorkTasksForUserAsync(int userIdentificator,
+    public async Task<WorkTask> MostActiveTaskAsync(string userId = "")
+    {
+        await using var connection = new SqlConnection(connectionString);
+
+        var query = "SELECT TOP 1 W.WorkTaskId " +
+                    "FROM dbo.WorkTasks W " +
+                    "JOIN dbo.WorkTaskComments WTC on W.WorkTaskId = WTC.WorkTaskId " +
+                    "WHERE WTC.UserId=@userId " +
+                    "ORDER BY (SELECT COUNT(*) FROM dbo.WorkTaskComments WC WHERE WC.UserId = W.UserId) DESC, W.UserId DESC";
+
+        var workTaskComment = string.Empty;
+        if (string.IsNullOrEmpty(userId))
+        {
+            query = "SELECT TOP 1 WTC.WorkTaskId " +
+                    "FROM (select W.WorkTaskId, count(*) as WTCount from dbo.WorkTaskComments W group by W.WorkTaskId) WTC " +
+                    "ORDER BY WTC.WTCount DESC";
+            workTaskComment = await connection.QueryFirstAsync<string>(query);
+        }
+        else
+            workTaskComment = await connection.QueryFirstAsync<string>(query, new { userId });
+        
+        return await DetailsAsync(workTaskComment);
+    }
+
+    public async Task<PaginatedList<WorkTask>> WorkTasksForUserAsync(string userIdentificator,
         int pageIndex = 1, int pageSize = 10, string query = "")
     {
         await using var connection = new SqlConnection(connectionString);

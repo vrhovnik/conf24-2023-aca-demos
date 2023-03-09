@@ -64,8 +64,7 @@ public class DashboardPageModel : BasePageModel
                 PdfDownloadUrl = apiOptions.ReportApiUrl.GenerateUrlForPdfDownload(userViewModel.UserId);
                 operation.Telemetry.Properties.Add("pdf-url", PdfDownloadUrl);
 
-                var itsUserId = int.Parse(userId);
-                UserTasks = await workTaskRepository.WorkTasksForUserAsync(itsUserId, currentPageNumber,
+                UserTasks = await workTaskRepository.WorkTasksForUserAsync(userId, currentPageNumber,
                     appOptions.PageCount, query);
                 telemetryClient.TrackMetric(new MetricTelemetry("TaskCount", UserTasks.TotalItems));
                 operation.Telemetry.Properties.Add("tasks-number", UserTasks.TotalItems.ToString());

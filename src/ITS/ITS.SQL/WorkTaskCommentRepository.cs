@@ -11,6 +11,22 @@ public class WorkTaskCommentRepository : BaseRepository<WorkTaskComment>, IWorkT
     {
     }
 
+    public override async Task<bool> UpdateAsync(WorkTaskComment entity)
+    {
+        await using var connection = new SqlConnection(connectionString);
+        var item = await connection.ExecuteAsync(
+            "UPDATE WorkTaskComments SET UserId=@userId,WorkTaskId=@workTaskId," +
+            "Comment=@comment WHERE WorkTaskId=@workTaskId", 
+            new
+            {
+                workTaskId = entity.AssignedTask.WorkTaskId,
+                comment = entity.Comment,
+                userId = entity.User.ItsUserId
+            });
+
+        return item > 0;
+    }
+
     public override async Task<WorkTaskComment> InsertAsync(WorkTaskComment entity)
     {
         await using var connection = new SqlConnection(connectionString);
@@ -81,5 +97,18 @@ public class WorkTaskCommentRepository : BaseRepository<WorkTaskComment>, IWorkT
         }, splitOn: "ItsUserId");
 
         return lookup.Values.ToList();
+    }
+
+    public async Task<List<WorkTaskComment>> GetCommentsForUserAsync(string userId)
+    {
+        await using var connection = new SqlConnection(connectionString);
+        var query =
+            "SELECT W.WorkTaskCommentId, W.WorkTaskCommentId, W.UserId, U.FullName, U.Email, W.WorkTaskId, W.Comment, W.StartDate FROM dbo.WorkTaskComments W " +
+            "JOIN Users U ON U.UserId=W.UserId " +
+            "JOIN dbo.WorkTasks WT on WT.WorkTaskId = W.WorkTaskId "+
+            "WHERE W.UserId=@userId order by W.StartDate DESC";
+
+        var data = await connection.QueryAsync<WorkTaskComment>(query, new { userId });
+        return data.ToList();
     }
 }

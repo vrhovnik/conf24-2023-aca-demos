@@ -13,8 +13,10 @@ public static class StringExtensions
     /// <param name="userId">user identification</param>
     /// <returns>absolute url to be able to download url or /task-api/download-pdf instead</returns>
     /// <remarks>validation will be added later</remarks>
-    public static string GenerateUrlForPdfDownload(this string webclientId, string userId) => 
-        $"{webclientId}/task-api/download-pdf/{{userId}}";
+    public static string GenerateUrlForPdfDownload(this string webclientId, string userId)
+    {
+        return $"{webclientId}/task-api/download-pdf/{{userId}}";
+    }
 
     private const string AllowableCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
 

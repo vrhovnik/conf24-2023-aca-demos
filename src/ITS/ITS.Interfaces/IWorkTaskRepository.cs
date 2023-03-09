@@ -5,7 +5,8 @@ namespace ITS.Interfaces;
 
 public interface IWorkTaskRepository : IDataRepository<WorkTask>
 {
-    public Task<PaginatedList<WorkTask>> WorkTasksForUserAsync(int userIdentificator,
+    public Task<WorkTask> MostActiveTaskAsync(string userId="");
+    public Task<PaginatedList<WorkTask>> WorkTasksForUserAsync(string userIdentificator,
         int pageIndex = 1,
         int pageSize = 10,
         string query = "");

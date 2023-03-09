@@ -40,11 +40,11 @@ public class TaskApiController : BaseSqlController
     
     [HttpGet]
     [Route("stats/{userId}")]
-    [Produces(typeof(IEnumerable<WorkTask>))]
+    [Produces(typeof(UserStats))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<IActionResult> GetActiveTasksForUser(string userId)
+    public async Task<IActionResult> GetStatsForUserAsync(string userId)
     {
         if (string.IsNullOrEmpty(userId))
         {
@@ -59,16 +59,25 @@ public class TaskApiController : BaseSqlController
             return BadRequest("User ID was not in correct format. Check if your data is the right or connection has been correctly set.");
         }
 
-        try
+        userId = itsUserId.ToString();
+        
+        var itsUser = await userRepository.DetailsAsync(userId);
+        var userStats = new UserStats
         {
-            var userWorkTasks = await workTaskRepository.WorkTasksForUserAsync(itsUserId);
-            return Ok(userWorkTasks.Where(currentUser => !currentUser.IsCompleted));
-        }
-        catch (Exception e)
-        {
-            logger.LogError(e.Message);
-            return BadRequest($"Data was not retrieved based on {userId}");
-        }
+            User = itsUser
+        };
+
+        var userWorkTasks = await workTaskRepository.WorkTasksForUserAsync(userId);
+        
+        userStats.ActiveTasks = userWorkTasks.Count(workTask => !workTask.IsCompleted);
+        userStats.PublicTasks = userWorkTasks.Count(workTask => workTask.IsPublic);
+        userStats.ClosedTasks = userWorkTasks.Count(workTask => workTask.End > workTask.Start);
+        var commentsForUser = await workTaskCommentRepository.GetCommentsForUserAsync(userId);
+        userStats.NumberOfComments = commentsForUser.Count;
+        var mostActiveTask = await workTaskRepository.MostActiveTaskAsync(userId);
+        userStats.MostActiveTask = mostActiveTask;
+        
+        return Ok(userWorkTasks);
     }
 
     [Route("pdf/{userId}")]
@@ -90,9 +99,11 @@ public class TaskApiController : BaseSqlController
             logger.LogError("User ID was not in correct format");
             return BadRequest("User ID was not in correct format. Check if your data is the right or connection has been correctly set.");
         }
+
+        userId = itsUserId.ToString();
         
         logger.LogInformation("Download PDF for user {UserId} called at {DateLoaded}", itsUserId, DateTime.Now);
-        var workTasks = await workTaskRepository.WorkTasksForUserAsync(itsUserId);
+        var workTasks = await workTaskRepository.WorkTasksForUserAsync(userId);
         var user = await userRepository.DetailsAsync(userId);
         logger.LogInformation("Received {NumberOfActiveTasks} tasks for user {UserId}", workTasks.Count,
             user.FullName);
