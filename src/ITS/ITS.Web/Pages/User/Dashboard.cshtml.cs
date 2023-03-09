@@ -3,6 +3,7 @@ using ITS.Core;
 using ITS.Interfaces;
 using ITS.Models;
 using ITS.Web.Base;
+using ITS.Web.Options;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Authorization;
@@ -20,16 +21,19 @@ public class DashboardPageModel : BasePageModel
     private readonly IUserDataContext userDataContext;
     private readonly TelemetryClient telemetryClient;
     private AppOptions appOptions;
+    private readonly ApiOptions apiOptions;
 
     public DashboardPageModel(ILogger<DashboardPageModel> logger,
         IProfileSettingsService profileSettingsService,
         IWorkTaskRepository workTaskRepository,
         IOptions<AppOptions> webSettingsValue,
+        IOptions<ApiOptions> apiSettingsValue,
         IUserDataContext userDataContext,
         TelemetryClient telemetryClient)
     {
         this.logger = logger;
         appOptions = webSettingsValue.Value;
+        apiOptions = apiSettingsValue.Value;
         this.profileSettingsService = profileSettingsService;
         this.workTaskRepository = workTaskRepository;
         this.userDataContext = userDataContext;
@@ -57,7 +61,7 @@ public class DashboardPageModel : BasePageModel
                 logger.LogInformation("Got profile for {UniqueSettingsId} - ended at {DateEnd}", userId, DateTime.Now);
 
                 telemetryClient.TrackTrace(new TraceTelemetry($"pdf generation for user {userId}"));
-                PdfDownloadUrl = appOptions.ClientApiUrl.GenerateUrlForPdfDownload(userViewModel.UserId);
+                PdfDownloadUrl = apiOptions.ReportApiUrl.GenerateUrlForPdfDownload(userViewModel.UserId);
                 operation.Telemetry.Properties.Add("pdf-url", PdfDownloadUrl);
 
                 var itsUserId = int.Parse(userId);

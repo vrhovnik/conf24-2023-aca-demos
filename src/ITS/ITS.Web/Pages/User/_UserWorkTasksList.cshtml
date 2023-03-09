@@ -1,8 +1,9 @@
 ﻿@using ITS.Core
+@using ITS.Web.Options
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Options
 @model ITS.Core.PaginatedList<ITS.Models.WorkTask>
-@inject IOptions<AppOptions> WebSettings
+@inject IOptions<ApiOptions> ApiSettings
 @if (Model.Any())
 {
     <div id="grid">
@@ -73,7 +74,7 @@
                         {
                             <a hx-confirm="Are you sure you wish to complete the task?"
                                hx-include="[name='workTaskId']"
-                               hx-post="@WebSettings.Value.ClientApiUrl/task-api/complete-task">
+                               hx-post="@ApiSettings.Value.ReportApiUrl/task-api/complete-task">
                                 <input name="workTaskId"
                                        type="hidden">
                                 <i class="fa-solid fa-check"></i>

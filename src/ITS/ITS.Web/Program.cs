@@ -3,6 +3,7 @@ using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
 using ITS.Web.Base;
+using ITS.Web.Options;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -11,6 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOptions<AppOptions>()
     .Bind(builder.Configuration.GetSection(AppOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+builder.Services.AddOptions<ApiOptions>()
+    .Bind(builder.Configuration.GetSection(ApiOptions.SectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 builder.Services.AddOptions<SqlOptions>()
