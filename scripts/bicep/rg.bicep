@@ -7,7 +7,7 @@ param resourceGroupLocation string = 'WestEurope'
 
 param resourceTags object = {
   Description: 'Resource group for ACA demo for conf 24'
-  Environment: 'Demo',
+  Environment: 'Demo'
   ResourceType: 'ResourceGroup'
 }
 

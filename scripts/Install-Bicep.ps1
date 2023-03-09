@@ -1,14 +1,4 @@
-﻿# login to Azure account
-az login
-# check account 
-az account list --output table
-
-# add modules to have them installed
-az extension add --name containerapp --upgrade
-az provider register --namespace Microsoft.App
-az provider register --namespace Microsoft.OperationalInsights
-
-# upgrade bicep to latest version
+﻿# upgrade bicep to latest version
 # if you don't have it installed 
 # Chocolatey
 # choco install bicep
@@ -25,7 +15,3 @@ $installDir.Attributes += 'Hidden'
 $currentPath = (Get-Item -path "HKCU:\Environment" ).GetValue('Path', '', 'DoNotExpandEnvironmentNames')
 if (-not $currentPath.Contains("%USERPROFILE%\.bicep")) { setx PATH ($currentPath + ";%USERPROFILE%\.bicep") }
 if (-not $env:path.Contains($installPath)) { $env:path += ";$installPath" }
-# Verify you can now access the 'bicep' command.
-bicep --help
-# upgrade to latest version
-az bicep upgrade

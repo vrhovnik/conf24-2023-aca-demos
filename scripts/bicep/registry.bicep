@@ -11,7 +11,7 @@ param acrSku string = 'Basic'
 
 param resourceTags object = {
   Description: 'Private container registry for ACA demo for conf 24'
-   Environment: 'Demo',
+   Environment: 'Demo'
    ResourceType: 'Registry'
 }
 
