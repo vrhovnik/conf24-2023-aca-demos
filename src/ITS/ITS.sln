@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITS.SQL", "ITS.SQL\ITS.SQL.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITS.SQL.DataGenerator", "ITS.SQL.DataGenerator\ITS.SQL.DataGenerator.csproj", "{FE8A1187-3683-4404-A7CC-660BF3456CDE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITS.Web.ReportApi", "ITS.Web.ReportApi\ITS.Web.ReportApi.csproj", "{E1D7EA36-049E-4622-91E6-B82C04653F61}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{FE8A1187-3683-4404-A7CC-660BF3456CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE8A1187-3683-4404-A7CC-660BF3456CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE8A1187-3683-4404-A7CC-660BF3456CDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1D7EA36-049E-4622-91E6-B82C04653F61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1D7EA36-049E-4622-91E6-B82C04653F61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1D7EA36-049E-4622-91E6-B82C04653F61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1D7EA36-049E-4622-91E6-B82C04653F61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

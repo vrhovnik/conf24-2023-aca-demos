@@ -13,7 +13,7 @@ public class UserDataContext : IUserDataContext
 
     public UserViewModel GetCurrentUser()
     {
-        var httpContextUser = httpContextAccessor.HttpContext.User;
+        var httpContextUser = httpContextAccessor.HttpContext?.User;
 
         var currentUser = new UserViewModel();
         var claimName = httpContextUser.FindFirst(ClaimTypes.Name);

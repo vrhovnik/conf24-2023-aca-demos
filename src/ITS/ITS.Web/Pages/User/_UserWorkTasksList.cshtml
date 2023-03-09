@@ -1,9 +1,8 @@
 ﻿@using ITS.Core
-@using ITS.Web.Options
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Options
 @model ITS.Core.PaginatedList<ITS.Models.WorkTask>
-@inject IOptions<GeneralWebOptions> WebSettings
+@inject IOptions<AppOptions> WebSettings
 @if (Model.Any())
 {
     <div id="grid">

@@ -3,7 +3,6 @@ using ITS.Core;
 using ITS.Interfaces;
 using ITS.Models;
 using ITS.Web.Base;
-using ITS.Web.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -14,11 +13,11 @@ public class IndexPageModel : BasePageModel
     private readonly ILogger<IndexPageModel> logger;
     private readonly IWorkTaskRepository workTaskRepository;
     private readonly IUserDataContext userDataContext;
-    private GeneralWebOptions? webOptions;
+    private AppOptions? webOptions;
 
     public IndexPageModel(ILogger<IndexPageModel> logger,
         IWorkTaskRepository workTaskRepository,
-        IOptions<GeneralWebOptions> webSettingsValue,
+        IOptions<AppOptions> webSettingsValue,
         IUserDataContext userDataContext)
     {
         this.logger = logger;

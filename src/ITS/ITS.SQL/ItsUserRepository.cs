@@ -58,11 +58,11 @@ public class ItsUserRepository : BaseRepository<ItsUser>, IUserRepository
         var item = await connection.QuerySingleOrDefaultAsync<ItsUser>(
             "SELECT U.UserId as ItsUserId, U.FullName, U.Email FROM Users U WHERE U.Email=@username", new { username });
 
-        if (item == null) return null;
+        if (item == null) return null!;
 
         item = await DetailsAsync(item.ItsUserId);
 
-        return PasswordHash.ValidateHash(password, item.Password) ? item : null;
+        return ((PasswordHash.ValidateHash(password, item.Password) ? item : null) ?? null)!;
     }
 
     public async Task<ItsUser> FindAsync(string email)
@@ -71,6 +71,6 @@ public class ItsUserRepository : BaseRepository<ItsUser>, IUserRepository
         var ttaUsers = await connection.QueryAsync<ItsUser>(
             "SELECT U.UserId as ItsUserId, U.FullName, U.Email " +
             "FROM Users U WHERE U.Email=@email", new { email });
-        return ttaUsers.Any() ? ttaUsers.ElementAt(0) : null;
+        return ((ttaUsers.Any() ? ttaUsers.ElementAt(0) : null) ?? null)!;
     }
 }

@@ -12,4 +12,5 @@ public interface IDataRepository<T> where T : class
     Task<T> InsertAsync(T entity);
     Task<T> DetailsAsync(string entityId);
     Task<int> GetCountAsync();
+    bool IsAlive();
 }

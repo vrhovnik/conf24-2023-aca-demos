@@ -1,8 +1,9 @@
 using System.IO.Compression;
+using HashidsNet;
+using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
 using ITS.Web.Base;
-using ITS.Web.Options;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -10,11 +11,11 @@ using Microsoft.AspNetCore.ResponseCompression;
 var builder = WebApplication.CreateBuilder(args);
 
 //options
-builder.Services.Configure<GeneralWebOptions>(builder.Configuration.GetSection("AppOptions"));
-builder.Services.Configure<SqlOptions>(builder.Configuration.GetSection("SqlOptions"));
+builder.Services.Configure<AppOptions>(builder.Configuration.GetSection(AppOptions.SectionName));
+builder.Services.Configure<SqlOptions>(builder.Configuration.GetSection(SqlOptions.SectionName));
 
 //adding interface mappings for services connecting to SQL
-var sqlOptions = builder.Configuration.GetSection("SqlOptions").Get<SqlOptions>();
+var sqlOptions = builder.Configuration.GetSection(SqlOptions.SectionName).Get<SqlOptions>();
 builder.Services.AddTransient<IUserRepository, ItsUserRepository>(_ =>
     new ItsUserRepository(sqlOptions.ConnectionString));
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>(_ =>

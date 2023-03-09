@@ -140,7 +140,7 @@ public class WorkTaskRepository : BaseRepository<WorkTask>, IWorkTaskRepository
         return true;
     }
 
-    public async Task<PaginatedList<WorkTask>> WorkTasksForUserAsync(string userIdentificator,
+    public async Task<PaginatedList<WorkTask>> WorkTasksForUserAsync(int userIdentificator,
         int pageIndex = 1, int pageSize = 10, string query = "")
     {
         await using var connection = new SqlConnection(connectionString);

@@ -9,7 +9,7 @@ namespace ITS.SQL;
 public class ProfileSettingsService : IProfileSettingsService
 {
     private  readonly string connectionString;
-    private IDbConnection connection;
+    private IDbConnection connection = null!;
 
     public ProfileSettingsService(string connectionString) => this.connectionString = connectionString;
 

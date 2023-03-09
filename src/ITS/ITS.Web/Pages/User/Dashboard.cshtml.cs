@@ -3,7 +3,6 @@ using ITS.Core;
 using ITS.Interfaces;
 using ITS.Models;
 using ITS.Web.Base;
-using ITS.Web.Options;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Authorization;
@@ -20,17 +19,17 @@ public class DashboardPageModel : BasePageModel
     private readonly IWorkTaskRepository workTaskRepository;
     private readonly IUserDataContext userDataContext;
     private readonly TelemetryClient telemetryClient;
-    private GeneralWebOptions generalWebOptions;
+    private AppOptions appOptions;
 
     public DashboardPageModel(ILogger<DashboardPageModel> logger,
         IProfileSettingsService profileSettingsService,
         IWorkTaskRepository workTaskRepository,
-        IOptions<GeneralWebOptions> webSettingsValue,
+        IOptions<AppOptions> webSettingsValue,
         IUserDataContext userDataContext,
         TelemetryClient telemetryClient)
     {
         this.logger = logger;
-        generalWebOptions = webSettingsValue.Value;
+        appOptions = webSettingsValue.Value;
         this.profileSettingsService = profileSettingsService;
         this.workTaskRepository = workTaskRepository;
         this.userDataContext = userDataContext;
@@ -51,18 +50,19 @@ public class DashboardPageModel : BasePageModel
         {
             try
             {
-                telemetryClient.TrackTrace(new TraceTelemetry("User from storage " + userId,
+                telemetryClient.TrackTrace(new TraceTelemetry($"User from storage {userId}",
                     SeverityLevel.Information));
                 ProfileSettings = await profileSettingsService.GetAsync(userId);
                 operation.Telemetry.Properties.Add("profile-id", userId);
                 logger.LogInformation("Got profile for {UniqueSettingsId} - ended at {DateEnd}", userId, DateTime.Now);
 
-                telemetryClient.TrackTrace(new TraceTelemetry("pdf generation for user " + userId));
-                PdfDownloadUrl = generalWebOptions.ClientApiUrl.GenerateUrlForPdfDownload(userViewModel.UserId);
+                telemetryClient.TrackTrace(new TraceTelemetry($"pdf generation for user {userId}"));
+                PdfDownloadUrl = appOptions.ClientApiUrl.GenerateUrlForPdfDownload(userViewModel.UserId);
                 operation.Telemetry.Properties.Add("pdf-url", PdfDownloadUrl);
-                
-                UserTasks = await workTaskRepository.WorkTasksForUserAsync(userId, currentPageNumber,
-                    generalWebOptions.PageCount, query);
+
+                var itsUserId = int.Parse(userId);
+                UserTasks = await workTaskRepository.WorkTasksForUserAsync(itsUserId, currentPageNumber,
+                    appOptions.PageCount, query);
                 telemetryClient.TrackMetric(new MetricTelemetry("TaskCount", UserTasks.TotalItems));
                 operation.Telemetry.Properties.Add("tasks-number", UserTasks.TotalItems.ToString());
 
