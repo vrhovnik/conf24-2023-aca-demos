@@ -3,14 +3,14 @@ param laName string = 'LawAca-${uniqueString(resourceGroup().id)}'
 
 @description('Specifies the location for all resources.')
 @allowed([
-  'westeurope'
-  'eastus'
-  'northeurope'  
+  'WestEurope'
+  'EastUs'
+  'NorthEurope'  
 ])
 param location string
 
 param resourceTags object = {
-  Description: 'Log analytics for ACA demo for conf 24'
+  Description: 'Log analytics for ACA demo for Conf24'
    Environment: 'Demo'
    ResourceType: 'Analytics'
 }

@@ -25,4 +25,8 @@
       <ProjectReference Include="..\ITS.SQL\ITS.SQL.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services" />
+    </ItemGroup>
+
 </Project>

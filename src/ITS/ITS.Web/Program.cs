@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using HashidsNet;
 using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
@@ -10,9 +9,14 @@ using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//options
-builder.Services.Configure<AppOptions>(builder.Configuration.GetSection(AppOptions.SectionName));
-builder.Services.Configure<SqlOptions>(builder.Configuration.GetSection(SqlOptions.SectionName));
+builder.Services.AddOptions<AppOptions>()
+    .Bind(builder.Configuration.GetSection(AppOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+builder.Services.AddOptions<SqlOptions>()
+    .Bind(builder.Configuration.GetSection(SqlOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 //adding interface mappings for services connecting to SQL
 var sqlOptions = builder.Configuration.GetSection(SqlOptions.SectionName).Get<SqlOptions>();

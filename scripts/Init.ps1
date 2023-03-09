@@ -57,3 +57,6 @@ New-AzResourceGroupDeployment -ResourceGroupName $groupName -TemplateFile "bicep
 #deploy log analytics file if not already deployed
 New-AzResourceGroupDeployment -ResourceGroupName $groupName -TemplateFile "bicep\log-analytics.bicep" -TemplateParameterFile "bicep\log-analytics.parameters.json" -Verbose
 Stop-Transcript
+
+# open file for viewing
+Start-Process notepad.exe -ArgumentList "$HOME/Downloads/bootstrapper.log"
