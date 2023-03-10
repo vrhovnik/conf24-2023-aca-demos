@@ -1,10 +1,6 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
-
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /src
-USER appuser
-
 COPY ["ITS/ITS.Models/", "ITS.Models/"]
 COPY ["ITS/ITS.Core/", "ITS.Core/"]
 COPY ["ITS/ITS.Interfaces/", "ITS.Interfaces/"]
@@ -22,7 +18,6 @@ RUN dotnet restore "ITS.Interfaces/ITS.Interfaces.csproj"
 RUN dotnet restore "ITS.SQL/ITS.SQL.csproj"
 RUN dotnet restore "ITS.Storage/ITS.Storage.csproj"
 RUN dotnet restore "ITS.File.Stats/ITS.File.Stats.csproj"
-
 
 FROM build AS compiledCodeStage
 RUN dotnet build "ITS.File.Stats/ITS.File.Stats.csproj" -c Release -o /app
