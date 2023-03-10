@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
@@ -27,7 +28,9 @@ builder.Services.AddTransient<IWorkTaskRepository, WorkTaskRepository>(_ =>
 builder.Services.AddTransient<IWorkTaskCommentRepository, WorkTaskCommentRepository>(_ =>
     new WorkTaskCommentRepository(sqlOptions.ConnectionString));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddHealthChecks();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(conf =>

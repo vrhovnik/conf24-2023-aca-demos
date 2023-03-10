@@ -41,9 +41,9 @@ public class TaskApiController : BaseSqlController
     [HttpGet]
     [Route("stats/{userId}")]
     [Produces(typeof(UserStats))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<IActionResult> GetStatsForUserAsync(string userId)
     {
@@ -78,7 +78,7 @@ public class TaskApiController : BaseSqlController
         var mostActiveTask = await workTaskRepository.MostActiveTaskAsync(userId);
         userStats.MostActiveTask = mostActiveTask;
         
-        return Ok(userWorkTasks);
+        return Ok(userStats);
     }
 
     [Route("pdf/{userId}")]
@@ -178,6 +178,7 @@ public class TaskApiController : BaseSqlController
     [HttpGet]
     [Route("app-health")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public override IActionResult CheckDbHealth()

@@ -13,14 +13,14 @@
     }
 </h1>
 
-<div class="container">
+<div class="container mt-2">
     <div class="row">
         @if (User.Identity.IsAuthenticated)
         {
             if (Model.CurrentUserStats != null)
             {
                 <div class="col">
-                    <div class="card">
+                    <div class="card" style="width: 19rem;">
                         <div class="card-header">
                             @User.Identity.Name quick stats
                         </div>
