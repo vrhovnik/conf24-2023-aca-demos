@@ -3,7 +3,9 @@ using ITS.Models;
 
 namespace ITS.Interfaces;
 
-public interface IWorkStatsRepository : IDataRepository<WorkTaskStats>
+public interface IWorkStatsRepository
 {
-    PaginatedList<WorkTask> GetStatsAsync(DateTime from, DateTime to);
+    Task<bool> GenerateStatsAsync(WorkTaskStats stats);
+    Task<List<WorkTaskStats>> GetAllAsync();
+    Task<PaginatedList<WorkTaskStats>> GetStatsAsync(DateTime from, DateTime to);
 }

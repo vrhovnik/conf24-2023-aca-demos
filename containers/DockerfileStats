@@ -1,0 +1,36 @@
+﻿FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+
+
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /src
+USER appuser
+
+COPY ["ITS/ITS.Models/", "ITS.Models/"]
+COPY ["ITS/ITS.Core/", "ITS.Core/"]
+COPY ["ITS/ITS.Interfaces/", "ITS.Interfaces/"]
+COPY ["ITS/ITS.SQL/", "ITS.SQL/"]
+COPY ["ITS/ITS.Storage/", "ITS.Storage/"]
+COPY ["ITS/ITS.File.Stats/", "ITS.File.Stats/"]
+
+COPY . .
+
+WORKDIR /src/
+
+RUN dotnet restore "ITS.Core/ITS.Core.csproj"
+RUN dotnet restore "ITS.Models/ITS.Models.csproj"
+RUN dotnet restore "ITS.Interfaces/ITS.Interfaces.csproj"
+RUN dotnet restore "ITS.SQL/ITS.SQL.csproj"
+RUN dotnet restore "ITS.Storage/ITS.Storage.csproj"
+RUN dotnet restore "ITS.File.Stats/ITS.File.Stats.csproj"
+
+
+FROM build AS compiledCodeStage
+RUN dotnet build "ITS.File.Stats/ITS.File.Stats.csproj" -c Release -o /app
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/runtime:6.0
+ENV SQL_CONNECTION_STRING="Server=sqlserver;Database=ITS;User Id=sa;Password=Password1234;"
+
+WORKDIR /app
+COPY --from=compiledCodeStage /app .
+ENTRYPOINT ["dotnet", "ITS.File.Stats.dll"]

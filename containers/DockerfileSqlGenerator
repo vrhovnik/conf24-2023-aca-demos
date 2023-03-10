@@ -1,0 +1,29 @@
+﻿FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+
+COPY ["ITS/ITS.Models/", "ITS.Models/"]
+COPY ["ITS/ITS.Core/", "ITS.Core/"]
+COPY ["ITS/ITS.SQL.DataGenerator/", "ITS.SQL.DataGenerator/"]
+
+COPY . .
+
+WORKDIR "/src/"
+
+RUN dotnet restore "ITS.Core/ITS.Core.csproj"
+RUN dotnet restore "ITS.Models/ITS.Models.csproj"
+RUN dotnet restore "ITS.SQL.DataGenerator/ITS.SQL.DataGenerator.csproj"
+
+FROM build AS compiledCodeStage
+RUN dotnet build "ITS.SQL.DataGenerator/ITS.SQL.DataGenerator.csproj" -c Release -o /app
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/runtime:6.0
+ENV SQL_CONNECTION_STRING="Server=sqlserver;Database=ITS;User Id=sa;Password=Password1234;"
+ENV DROP_DATABASE="false"
+ENV CREATE_TABLES="false"
+ENV DEFAULT_PASSWORD="StarWars_$$01!"
+ENV RECORD_NUMBER=500
+
+WORKDIR /app
+COPY --from=compiledCodeStage /app .
+ENTRYPOINT ["dotnet", "ITS.SQL.DataGenerator.dll"]

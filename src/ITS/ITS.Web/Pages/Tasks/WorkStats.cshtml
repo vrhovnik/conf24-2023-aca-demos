@@ -1,0 +1,103 @@
+﻿@page  "{pageNumber=1}"
+@model ITS.Web.Pages.Tasks.WorkStatsPageModel
+
+@{
+    ViewData["Title"] = "Work Tasks Statistics";
+}
+
+<h2>Work Tasks Statistics (@Model.WorkStatsList.TotalItems items)</h2>
+
+@if (Model.WorkStatsList.Any())
+{
+    <div id="grid">
+        <table class="table table-light table-hover"
+               id="tbData">
+            <caption>
+                Work Tasks Statistics
+            </caption>
+            <thead class="thead-dark">
+            <tr>
+                <th>
+                    Daily tasks
+                </th>
+                <th>
+                    Public tasks
+                </th>
+                <th>Comments</th>
+                <th>Category of most active tag</th>
+                <th>Created at</th>
+            </tr>
+            </thead>
+            @foreach (var workTask in Model.WorkStatsList)
+            {
+                <tr>
+                    <td>@workTask.DailyTasks</td>
+                    <td>@workTask.PublicTasks</td>
+                    <td class="text-center">@workTask.NumberOfComments</td>
+                    <td>
+                        @if (workTask.MostActiveTask == null)
+                        {
+                            <span class="text-info">No data</span>
+                        }
+                        else
+                        {
+                            @workTask.MostActiveTask.Category.Name
+                        }
+                    </td>
+                    <td>@workTask.DateCreated.ToShortDateString()</td>
+                </tr>
+            }
+        </table>
+        <nav>
+            <ul class="pagination">
+                <li class="page-item @(Model.WorkStatsList.HasPreviousPage ? "" : "disabled")">
+                    @if (Model.WorkStatsList.PageIndex - 1 < 1)
+                    {
+                        <a asp-route-pageNumber="1"
+                           class="page-link">
+                            Previous
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-route-pageNumber="@(Model.WorkStatsList.PageIndex - 1)"
+                           class="page-link">
+                            Previous
+                        </a>
+                    }
+                </li>
+                @for (var currentPageIndex = 1; currentPageIndex <= Model.WorkStatsList.TotalPages; currentPageIndex++)
+                {
+                    <li class="page-item @(Model.WorkStatsList.PageIndex == currentPageIndex ? "active" : "")">
+                        <a asp-route-pageNumber="@currentPageIndex"
+                           class="page-link">
+                            @currentPageIndex
+                        </a>
+                    </li>
+                }
+                <li class="page-item @(Model.WorkStatsList.HasNextPage ? "" : "disabled")">
+                    @if (Model.WorkStatsList.PageIndex + 1 < Model.WorkStatsList.TotalPages)
+                    {
+                        <a asp-route-pageNumber="@(Model.WorkStatsList.PageIndex + 1)"
+                           class="page-link">
+                            Next
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-route-pageNumber="@(Model.WorkStatsList.TotalPages)"
+                           class="page-link">
+                            Next
+                        </a>
+                    }
+                </li>
+            </ul>
+        </nav>
+    </div>
+}
+else
+{
+    <p class="text-info">
+        No data present, check stats logs.
+    </p>
+}

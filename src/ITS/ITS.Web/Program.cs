@@ -1,8 +1,8 @@
 using System.IO.Compression;
-using System.Net;
 using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
+using ITS.Storage;
 using ITS.Web.Base;
 using ITS.Web.Options;
 using ITS.Web.Services;
@@ -19,17 +19,18 @@ builder.Services.AddOptions<AppOptions>()
     .Bind(builder.Configuration.GetSection(SectionNameConsts.AppOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
-
+builder.Services.AddOptions<StorageOptions>()
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.StorageOptionsSectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 builder.Services.AddOptions<ApiOptions>()
     .Bind(builder.Configuration.GetSection(SectionNameConsts.ApiOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
-
 builder.Services.AddOptions<SqlOptions>()
     .Bind(builder.Configuration.GetSection(SectionNameConsts.SqlOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
-
 builder.Services.AddOptions<AuthOptions>()
     .Bind(builder.Configuration.GetSection(SectionNameConsts.AuthOptionsSectionName))
     .ValidateDataAnnotations()
@@ -50,7 +51,13 @@ builder.Services.AddTransient<IProfileSettingsService, ProfileSettingsService>(_
     new ProfileSettingsService(sqlOptions.ConnectionString));
 builder.Services.AddTransient<IWorkTaskCommentRepository, WorkTaskCommentRepository>(_ =>
     new WorkTaskCommentRepository(sqlOptions.ConnectionString));
+var storageOptions = builder.Configuration.GetSection(SectionNameConsts.StorageOptionsSectionName)
+    .Get<StorageOptions>();
+builder.Services.AddTransient<IWorkStatsRepository, WorkStatsStorageRepository>(_ =>
+    new WorkStatsStorageRepository(storageOptions.FileName));
+builder.Services.AddScoped<IUserDataContext, UserDataContext>();
 
+//adding system services
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 builder.Services.AddResponseCompression(options => options.Providers.Add<GzipCompressionProvider>());
@@ -58,7 +65,7 @@ builder.Services.Configure<GzipCompressionProviderOptions>(compressionOptions =>
     compressionOptions.Level = CompressionLevel.Optimal);
 builder.Services.AddHealthChecks();
 
-builder.Services.AddScoped<IUserDataContext, UserDataContext>();
+//http services with retry policies
 builder.Services.AddHttpClient<ReportApiHttpService>()
     .AddTransientHttpErrorPolicy(policyBuilder =>
         policyBuilder.WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5)));

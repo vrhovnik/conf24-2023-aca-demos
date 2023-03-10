@@ -25,6 +25,7 @@
       <ProjectReference Include="..\ITS.Interfaces\ITS.Interfaces.csproj" />
       <ProjectReference Include="..\ITS.Models\ITS.Models.csproj" />
       <ProjectReference Include="..\ITS.SQL\ITS.SQL.csproj" />
+      <ProjectReference Include="..\ITS.Storage\ITS.Storage.csproj" />
     </ItemGroup>
 
 </Project>

@@ -6,4 +6,5 @@ public static class SectionNameConsts
     public const string SqlOptionsSectionName = "SqlOptions";
     public const string AuthOptionsSectionName = "AuthOptions";
     public const string ApiOptionsSectionName = "ApiOptions";
+    public const string StorageOptionsSectionName = "StorageOptions";
 }

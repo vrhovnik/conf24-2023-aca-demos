@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITS.SQL.DataGenerator", "IT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITS.Web.ReportApi", "ITS.Web.ReportApi\ITS.Web.ReportApi.csproj", "{E1D7EA36-049E-4622-91E6-B82C04653F61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITS.File.Stats", "ITS.File.Stats\ITS.File.Stats.csproj", "{83C9EF35-04C8-41B3-8869-CD85CFF14140}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITS.Storage", "ITS.Storage\ITS.Storage.csproj", "{4BE1DEAE-B456-4A94-AB79-151167B229EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +52,13 @@ Global
 		{E1D7EA36-049E-4622-91E6-B82C04653F61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1D7EA36-049E-4622-91E6-B82C04653F61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1D7EA36-049E-4622-91E6-B82C04653F61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83C9EF35-04C8-41B3-8869-CD85CFF14140}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83C9EF35-04C8-41B3-8869-CD85CFF14140}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83C9EF35-04C8-41B3-8869-CD85CFF14140}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83C9EF35-04C8-41B3-8869-CD85CFF14140}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BE1DEAE-B456-4A94-AB79-151167B229EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BE1DEAE-B456-4A94-AB79-151167B229EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BE1DEAE-B456-4A94-AB79-151167B229EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BE1DEAE-B456-4A94-AB79-151167B229EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
