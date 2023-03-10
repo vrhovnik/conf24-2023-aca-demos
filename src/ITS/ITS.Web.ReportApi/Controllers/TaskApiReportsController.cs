@@ -43,6 +43,7 @@ public class TaskApiController : BaseSqlController
     [Produces(typeof(UserStats))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<IActionResult> GetStatsForUserAsync(string userId)
     {
@@ -84,6 +85,7 @@ public class TaskApiController : BaseSqlController
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<IActionResult> DownloadPdfAsync(string userId)
     {

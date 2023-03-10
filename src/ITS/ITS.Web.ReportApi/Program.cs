@@ -76,9 +76,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(allowOrigins);
-app.UseAuthorization();
 app.UseRouting();
+app.UseAuthorization();
+app.UseCors(allowOrigins);
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHealthChecks("/health").AllowAnonymous();

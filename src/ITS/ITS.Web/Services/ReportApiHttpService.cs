@@ -5,6 +5,9 @@ using ITS.Models;
 using ITS.Web.Options;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Polly;
+using Polly.CircuitBreaker;
+using Polly.Extensions.Http;
 
 namespace ITS.Web.Services;
 
@@ -13,6 +16,11 @@ public class ReportApiHttpService
     private readonly HttpClient client;
     private readonly ILogger<ReportApiHttpService> logger;
     private readonly AuthOptions authOptions;
+    private readonly AsyncCircuitBreakerPolicy<HttpResponseMessage> circuitBreakerPolicy =
+        Policy<HttpResponseMessage>
+            .Handle<HttpRequestException>()
+            .OrTransientHttpError()
+            .AdvancedCircuitBreakerAsync(0.5, TimeSpan.FromSeconds(10), 10, TimeSpan.FromSeconds(5));
 
     public ReportApiHttpService(HttpClient client, IOptions<ApiOptions> apiOptionsValue,
         IOptions<AuthOptions> authOptionsValue, ILogger<ReportApiHttpService> logger)
@@ -30,7 +38,7 @@ public class ReportApiHttpService
         {
             var watch = Stopwatch.StartNew();
             logger.LogInformation("Check service health");
-            var healthMessage = await client.GetAsync("health");
+            var healthMessage = await circuitBreakerPolicy.ExecuteAsync(() => client.GetAsync("health"));
             watch.Stop();
 
             logger.LogInformation("Call to health endpoint took {ElapsedInMs} ms.", watch.ElapsedMilliseconds);
@@ -43,7 +51,8 @@ public class ReportApiHttpService
 
             logger.LogInformation("Service up and running, checking connection to database");
             watch.Reset();
-            var databaseHealth = await client.GetAsync("tasks-api-reports/app-health");
+            var databaseHealth =
+                await circuitBreakerPolicy.ExecuteAsync(() => client.GetAsync("tasks-api-reports/app-health"));
             logger.LogInformation("Call to database endpoint took {ElapsedInMs} ms.", watch.ElapsedMilliseconds);
             if (!databaseHealth.IsSuccessStatusCode)
             {
@@ -78,7 +87,8 @@ public class ReportApiHttpService
             var watch = new Stopwatch();
             watch.Start();
             logger.LogInformation("Calling API and measuring response");
-            var responseMessage = await client.GetAsync($"tasks-api-reports/stats/{currentUserId}");
+            var responseMessage =
+                await client.GetAsync($"tasks-api-reports/stats/{currentUserId}");
             watch.Stop();
 
             logger.LogInformation("Api called. Call was {TimeInMs} ms", watch.ElapsedMilliseconds);

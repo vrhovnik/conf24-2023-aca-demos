@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Net;
 using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
@@ -8,6 +9,8 @@ using ITS.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.ResponseCompression;
+using Polly;
+using Polly.Contrib.WaitAndRetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +59,9 @@ builder.Services.Configure<GzipCompressionProviderOptions>(compressionOptions =>
 builder.Services.AddHealthChecks();
 
 builder.Services.AddScoped<IUserDataContext, UserDataContext>();
-builder.Services.AddHttpClient<ReportApiHttpService>();
+builder.Services.AddHttpClient<ReportApiHttpService>()
+    .AddTransientHttpErrorPolicy(policyBuilder =>
+        policyBuilder.WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5)));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options => options.LoginPath = new PathString("/User/Login"));
