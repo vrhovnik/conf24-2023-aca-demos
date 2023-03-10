@@ -125,7 +125,6 @@ if (AnsiConsole.Profile.Capabilities.Links)
     AnsiConsole.MarkupLine(
         "Check [link=https://https://github.com/vrhovnik/conf24-2023-aca-demos]for more information[/]");
 
-
 async Task<string[]> GetDataFromFileAsync(string filename, char delimiter = ',')
 {
     var filePath = Path.Join(folderRoot, filename);
