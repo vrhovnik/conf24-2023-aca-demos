@@ -28,6 +28,7 @@ builder.Services.AddTransient<IWorkTaskCommentRepository, WorkTaskCommentReposit
     new WorkTaskCommentRepository(sqlOptions.ConnectionString));
 
 builder.Services.AddControllers();
+builder.Services.AddHealthChecks();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(conf =>
 {
@@ -65,8 +66,7 @@ builder.Services.AddCors(options =>
         {
             policy.AllowAnyOrigin()
                 .AllowAnyMethod()
-                .WithExposedHeaders(AuthOptions.ApiKeyHeaderName)
-                .AllowCredentials();
+                .WithExposedHeaders(AuthOptions.ApiKeyHeaderName);
         });
 });
 var app = builder.Build();
@@ -76,9 +76,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseMiddleware<ApiKeyAuthMiddleware>();
 app.UseCors(allowOrigins);
 app.UseAuthorization();
+app.UseRouting();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHealthChecks("/health").AllowAnonymous();
