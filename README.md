@@ -12,6 +12,16 @@ deploy and configure Kubernetes-style applications, focusing on application life
 managing infrastructure, enriching the functionality with distributed application runtime (Dapr), securely manage all
 the secrets, and enabling hybrid scenarios with running apps on Kubernetes on-prem as managed offerings.
 
+<!-- TOC -->
+* [Conf24: Azure Container Apps – serverless container apps in action](#conf24--azure-container-apps--serverless-container-apps-in-action)
+  * [Prerequisites](#prerequisites)
+  * [Demos](#demos)
+  * [Create and load environment variables](#create-and-load-environment-variables)
+* [Additional information](#additional-information)
+* [Credits](#credits)
+* [Contributing](#contributing)
+<!-- TOC -->
+
 ## Prerequisites
 
 1. an active [Azure](https://www.azure.com) subscription - [MSDN](https://my.visualstudio.com) or trial
@@ -47,6 +57,23 @@ comment on tasks, collaborate and more. You can download list of tasks in PDF fo
 with tasks,which will get downloaded and stored in PDF for offline viewing and will generate reports with attached resources.
 
 ![Demo solution structure](https://webeudatastorage.blob.core.windows.net/web/conf-24-solution-demo.png)
+
+## Create and load environment variables
+
+The easiest way to create environment variables is to store it to file, exclude that file from getting into source control and load variables via PowerShell (as demonstrated below). 
+You can check out [docs for dotnet run](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run) for more options how to run the app with parameters.
+
+If you want to automate the process, you can use PowerShell script to prepare the environment for you.
+
+```powershell
+Get-Content $PathToENVFile | ForEach-Object {
+    $name, $value = $_.split('=')
+    Set-Content env:\$name $value
+}
+```
+
+Prepare file (example [here](./scripts/env-file-example.changetoenv) - rename to .env) and exclude *.env files from putting it to the repo. More [here](https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files).
+Open PowerShell and run the upper command by replacing PathToENVFile the path to your file in double quotes.
 
 # Additional information
 
