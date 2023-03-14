@@ -1,9 +1,10 @@
-﻿using ITS.Models;
+﻿using System.Diagnostics;
+using ITS.Models;
 using ITS.SQL;
 using Newtonsoft.Json;
 using Spectre.Console;
 
-AnsiConsole.Write(new FigletText("Work Stats generator for ITS app").Centered().Color(Color.Red));
+AnsiConsole.Write(new Rule("[red]Work Stats generator for ITS app[/]"));
 var sqlConn = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
 if (string.IsNullOrEmpty(sqlConn)) sqlConn = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=ITSDB;";
 
@@ -76,8 +77,11 @@ await AnsiConsole.Status()
         await File.WriteAllTextAsync(filePath,dataToBeStored);
     });
 
-AnsiConsole.Write(new Markup($"Data has been saved to [red]{filePath}[/]. Check it out."));
+AnsiConsole.Write(new Markup($"Data has been saved to [red]{filePath}[/]."));
 AnsiConsole.WriteLine();
+
+//open folder to see the result
+Process.Start(new ProcessStartInfo("notepad",filePath));
 
 if (AnsiConsole.Profile.Capabilities.Links)
     AnsiConsole.MarkupLine(

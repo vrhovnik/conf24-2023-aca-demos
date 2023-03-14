@@ -16,6 +16,7 @@
       <ProjectReference Include="..\ITS.Core\ITS.Core.csproj" />
       <ProjectReference Include="..\ITS.Interfaces\ITS.Interfaces.csproj" />
       <ProjectReference Include="..\ITS.SQL\ITS.SQL.csproj" />
+      <ProjectReference Include="..\ITS.Storage\ITS.Storage.csproj" />
     </ItemGroup>
 
 </Project>

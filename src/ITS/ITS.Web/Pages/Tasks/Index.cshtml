@@ -9,24 +9,28 @@
 {
     <p class="text-warning">@Model.Message</p>
 }
-
-@if (User.Identity.IsAuthenticated)
-{
-    <div class="container">
+<div class="container">
+    @if (User.Identity.IsAuthenticated)
+    {
         <div class="float-end mb-2 mt-2">
             <a asp-page="/Tasks/Create"
                class="btn btn-success">
                 Create new task <i class="fas fa-plus"></i>
             </a>
         </div>
+    }
+    <div class="float-end mb-2 mt-2">
+        <a href="@Model.ReportApiPublicTasks" target="_blank">
+            Download PDF <i class="fa-solid fa-file-pdf"></i>
+        </a>
     </div>
-}
+</div>
 <div class="container">
     <input aria-label="search term"
-           class="form-control"
-           hx-get
            asp-for="Query"
            autocomplete="off"
+           class="form-control"
+           hx-get
            hx-swap="outerHtml"
            hx-target="#grid"
            hx-trigger="keyup changed delay:300ms"
@@ -41,4 +45,3 @@
 {
     <script src="https://unpkg.com/htmx.org@1.6.0"></script>
 }
-

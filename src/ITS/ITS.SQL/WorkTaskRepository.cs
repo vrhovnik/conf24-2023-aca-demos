@@ -12,6 +12,19 @@ public class WorkTaskRepository : BaseRepository<WorkTask>, IWorkTaskRepository
     {
     }
 
+    public override async Task<List<WorkTask>> GetAsync()
+    {
+        await using var connection = new SqlConnection(connectionString);
+        var sqlQuery =
+            "SELECT T.WorkTaskId, T.IsPublic,T.IsCompleted, T.StartDate as [Start], T.EndDate as [End], T.Description, C.CategoryId, C.Name, " +
+            "T.UserId as ItsUserId, FF.TagName  " +
+            " FROM WorkTasks T JOIN WorkTask2Tags FF on FF.WorkTaskId=T.WorkTaskId " +
+            " JOIN Categories C on C.CategoryId=T.CategoryId ";
+
+        var grid = await connection.QueryAsync<WorkTask>(sqlQuery);
+        return grid.ToList();
+    }
+
     public override async Task<WorkTask> DetailsAsync(string entityId)
     {
         await using var connection = new SqlConnection(connectionString);

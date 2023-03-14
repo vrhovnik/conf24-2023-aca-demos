@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
+using ITS.Storage;
 using ITS.Web.ReportApi.Authentication;
 using Microsoft.OpenApi.Models;
 
@@ -12,6 +13,10 @@ builder.Services.AddOptions<AppOptions>()
     .ValidateOnStart();
 builder.Services.AddOptions<SqlOptions>()
     .Bind(builder.Configuration.GetSection(SectionNameConsts.SqlOptionsSectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+builder.Services.AddOptions<StorageOptions>()
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.StorageOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 builder.Services.AddOptions<AuthOptions>()
@@ -27,6 +32,11 @@ builder.Services.AddTransient<IWorkTaskRepository, WorkTaskRepository>(_ =>
     new WorkTaskRepository(sqlOptions.ConnectionString));
 builder.Services.AddTransient<IWorkTaskCommentRepository, WorkTaskCommentRepository>(_ =>
     new WorkTaskCommentRepository(sqlOptions.ConnectionString));
+
+var storageOptions = builder.Configuration.GetSection(SectionNameConsts.StorageOptionsSectionName)
+    .Get<StorageOptions>();
+builder.Services.AddTransient<IWorkStatsRepository, WorkStatsStorageRepository>(_ =>
+    new WorkStatsStorageRepository(storageOptions.FileName));
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

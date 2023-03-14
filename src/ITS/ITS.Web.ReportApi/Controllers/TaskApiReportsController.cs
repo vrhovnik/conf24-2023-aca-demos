@@ -23,18 +23,21 @@ public class TaskApiController : BaseSqlController
     private readonly IWorkTaskRepository workTaskRepository;
     private readonly IWorkTaskCommentRepository workTaskCommentRepository;
     private readonly IUserRepository userRepository;
+    private readonly IWorkStatsRepository workStatsRepository;
     private readonly AuthOptions authOptions;
     
     public TaskApiController(ILogger<TaskApiController> logger,
         IWorkTaskRepository workTaskRepository,
         IWorkTaskCommentRepository workTaskCommentRepository,
         IUserRepository userRepository,
+        IWorkStatsRepository workStatsRepository,
         IOptions<AuthOptions> authOptionValue) 
     {
         this.logger = logger;
         this.workTaskRepository = workTaskRepository;
         this.workTaskCommentRepository = workTaskCommentRepository;
         this.userRepository = userRepository;
+        this.workStatsRepository = workStatsRepository;
         authOptions = authOptionValue.Value;
     }
     
@@ -157,6 +160,76 @@ public class TaskApiController : BaseSqlController
                                 table.Cell().Element(CellStyle).AlignCenter()
                                     .Text(item.Category.Name);
 
+                                static IContainer CellStyle(IContainer container) =>
+                                    container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
+                                        .PaddingVertical(5);
+                            }
+                        });
+                    page.Footer()
+                        .AlignCenter()
+                        .Text(x =>
+                        {
+                            x.Span("Page ");
+                            x.CurrentPageNumber();
+                        });
+                });
+            })
+            .GeneratePdf();
+        return File(generatePdf, "application/pdf");
+    }
+    
+    [Route("public-stats/pdf")]
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DownloadPublicPdfAsync()
+    {
+        var workTaskStatsList = await workStatsRepository.GetAllAsync();
+        var generatePdf = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(20));
+
+                    page.Header()
+                        .Text($"Public task stats!")
+                        .SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
+
+                    page.Content()
+                        .PaddingVertical(1, Unit.Centimetre)
+                        .Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(3);
+                                columns.RelativeColumn();
+                                columns.RelativeColumn();
+                                columns.RelativeColumn();
+                            });
+                            table.Header(header =>
+                            {
+                                header.Cell().Element(CellStyle).Text("No. public tasks");
+                                header.Cell().Element(CellStyle).AlignRight().Text("No. closed tasks");
+                                header.Cell().Element(CellStyle).AlignRight().Text("No. comments");
+                                static IContainer CellStyle(IContainer container) =>
+                                    container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1)
+                                        .BorderColor(Colors.Black);
+                            });
+                            foreach (var item in workTaskStatsList)
+                            {
+                                table.Cell().Element(CellStyle)
+                                    .Text(item.PublicTasks.ToString())
+                                    .WrapAnywhere();
+                                table.Cell().Element(CellStyle)
+                                    .AlignCenter()
+                                    .Text(item.ClosedTasks.ToString());
+                                table.Cell().Element(CellStyle)
+                                    .Text(item.NumberOfComments.ToString());
+                                
                                 static IContainer CellStyle(IContainer container) =>
                                     container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
                                         .PaddingVertical(5);
