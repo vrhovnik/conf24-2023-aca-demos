@@ -36,15 +36,22 @@ public class WorkStatsStorageRepository : IWorkStatsRepository
 
     public async Task<List<WorkTaskStats>> GetAllAsync()
     {
-        var allWorkStatsText = await File.ReadAllTextAsync(fileName);
-        var allWorksStats = JsonConvert.DeserializeObject<List<WorkTaskStats>>(allWorkStatsText);
-        return allWorksStats;
+        try
+        {
+            var allWorkStatsText = await File.ReadAllTextAsync(fileName);
+            var allWorksStats = JsonConvert.DeserializeObject<List<WorkTaskStats>>(allWorkStatsText);
+            return allWorksStats;
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine(e);
+            return null;
+        }
     }
 
     public async Task<PaginatedList<WorkTaskStats>> GetStatsAsync(DateTime from, DateTime to)
     {
-        var allWorkStatsText = await File.ReadAllTextAsync(fileName);
-        var allWorksStats = JsonConvert.DeserializeObject<List<WorkTaskStats>>(allWorkStatsText);
+        var allWorksStats = await GetAllAsync();
         var allStatsInBetween = allWorksStats.Where(stats =>
             stats.DateCreated >= from && stats.DateCreated <= to).ToList();
         return PaginatedList<WorkTaskStats>.Create(allStatsInBetween, 1, 15);

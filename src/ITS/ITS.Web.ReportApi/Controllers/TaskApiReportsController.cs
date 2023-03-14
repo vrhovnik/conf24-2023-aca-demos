@@ -186,6 +186,13 @@ public class TaskApiController : BaseSqlController
     public async Task<IActionResult> DownloadPublicPdfAsync()
     {
         var workTaskStatsList = await workStatsRepository.GetAllAsync();
+
+        if (workTaskStatsList == null)
+        {
+            logger.LogError("There is no data");
+            return BadRequest("No data");
+        }
+        
         var generatePdf = Document.Create(container =>
             {
                 container.Page(page =>
