@@ -11,23 +11,27 @@
 # NOTES
 # Author      : Bojan Vrhovnik
 # GitHub      : https://github.com/vrhovnik
-# Version 1.3.0
-# SHORT CHANGE DESCRIPTION: adding location as a parameter and bicep install for sql
+# Version 1.5.0
+# SHORT CHANGE DESCRIPTION: adding setting environment variables from file
 #>
 param(
     [Parameter(Mandatory=$false)]
     $Location="WestEurope",
     [Parameter(Mandatory=$false)]
+    $EnvFileToReadFrom="local.env",
+    [Parameter(Mandatory=$false)]
     [switch]$InstallModules,
     [Parameter(Mandatory=$false)]
-    [switch]$InstallBicep
+    [switch]$InstallBicep,
+    [Parameter(Mandatory = $false)]
+    [switch]$UseEnvFile
 )
 
 Start-Transcript -Path "$HOME/Downloads/bootstrapper.log" -Force
 
-Write-Output "Sign in to Azure account." 
+# Write-Output "Sign in to Azure account." 
 # login to Azure account
-Connect-AzAccount
+# Connect-AzAccount
 
 if ($InstallModules)
 {
@@ -51,8 +55,17 @@ if ($InstallBicep) {
     Write-Output "Bicep installed, continuing to Azure deployment."
 }
 
+if ($UseEnvFile)
+{
+    Get-Content $EnvFileToReadFrom | ForEach-Object {
+        $name, $value = $_.split('=')
+        Set-Content env:\$name $value
+        Write-Information "Writing $name to environment variable with $value."
+    }  
+}
+
 # create resource group if it doesn't exist with bicep file stored in bicep folder
-$groupNameExport = New-AzSubscriptionDeployment -Location "WestEurope" -TemplateFile ".\bicep\rg.bicep" -TemplateParameterFile ".\bicep\reg.parameters.json" -Verbose
+$groupNameExport = New-AzSubscriptionDeployment -Location $Location -TemplateFile ".\bicep\rg.bicep" -TemplateParameterFile ".\bicep\rg.parameters.json" -Verbose
 Write-Information $groupNameExport
 $groupName = $groupNameExport.Outputs.rgName.Value
 
