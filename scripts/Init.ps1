@@ -7,14 +7,16 @@
 #  RESOURCE GROUP
 #  CONTAINER REGISTRY
 #  LOG ANALYTICS 
-#
+#  SQL database
 # NOTES
 # Author      : Bojan Vrhovnik
 # GitHub      : https://github.com/vrhovnik
-# Version 1.1.0
-# SHORT CHANGE DESCRIPTION: updating description
+# Version 1.3.0
+# SHORT CHANGE DESCRIPTION: adding location as a parameter and bicep install for sql
 #>
 param(
+    [Parameter(Mandatory=$false)]
+    $Location="WestEurope",
     [Parameter(Mandatory=$false)]
     [switch]$InstallModules,
     [Parameter(Mandatory=$false)]
@@ -49,13 +51,18 @@ if ($InstallBicep) {
     Write-Output "Bicep installed, continuing to Azure deployment."
 }
 
-$groupName = "Conf24RG"
 # create resource group if it doesn't exist with bicep file stored in bicep folder
-New-AzSubscriptionDeployment -Location "WestEurope" -TemplateFile "bicep\rg.bicep" -resourceGroupName $groupName -Verbose
+$groupNameExport = New-AzSubscriptionDeployment -Location "WestEurope" -TemplateFile ".\bicep\rg.bicep" -TemplateParameterFile ".\bicep\reg.parameters.json" -Verbose
+Write-Information $groupNameExport
+$groupName = $groupNameExport.Outputs.rgName.Value
+
 #deploy registry file if not already deployed
-New-AzResourceGroupDeployment -ResourceGroupName $groupName -TemplateFile "bicep\registry.bicep" -TemplateParameterFile "bicep\registry.parameters.json" -Verbose  
+New-AzResourceGroupDeployment -ResourceGroupName $groupName -TemplateFile ".\bicep\registry.bicep" -TemplateParameterFile ".\bicep\registry.parameters.json" -Verbose  
 #deploy log analytics file if not already deployed
-New-AzResourceGroupDeployment -ResourceGroupName $groupName -TemplateFile "bicep\log-analytics.bicep" -TemplateParameterFile "bicep\log-analytics.parameters.json" -Verbose
+New-AzResourceGroupDeployment -ResourceGroupName $groupName -TemplateFile ".\bicep\log-analytics.bicep" -TemplateParameterFile ".\bicep\log-analytics.parameters.json" -Verbose
+# deploy sql server and database
+New-AzResourceGroupDeployment -ResourceGroupName $groupName -TemplateFile ".\bicep\sql.bicep" -TemplateParameterFile ".\bicep\sql.parameters.json" -Verbose
+
 Stop-Transcript
 
 # open file for viewing
