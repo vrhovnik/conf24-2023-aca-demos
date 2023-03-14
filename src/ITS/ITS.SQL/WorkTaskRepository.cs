@@ -173,7 +173,7 @@ public class WorkTaskRepository : BaseRepository<WorkTask>, IWorkTaskRepository
         }
         else
             workTaskComment = await connection.QueryFirstAsync<string>(query, new { userId });
-        
+
         return await DetailsAsync(workTaskComment);
     }
 
@@ -265,8 +265,17 @@ public class WorkTaskRepository : BaseRepository<WorkTask>, IWorkTaskRepository
         return await connection.ExecuteAsync(sqlQuery, new { workTaskId }) > 0;
     }
 
-    public Task<PaginatedList<WorkTask>> GetTasksFromAsync(DateTime from, DateTime to)
+    public async Task<PaginatedList<WorkTask>> GetTasksFromAsync(DateTime from, DateTime to)
     {
-        throw new NotImplementedException();
+        await using var connection = new SqlConnection(connectionString);
+        var sqlQuery =
+            "SELECT T.WorkTaskId, T.IsPublic,T.IsCompleted, T.StartDate as [Start], T.EndDate as [End], T.Description, C.CategoryId, C.Name, " +
+            "T.UserId as ItsUserId, FF.TagName  " +
+            " FROM WorkTasks T JOIN WorkTask2Tags FF on FF.WorkTaskId=T.WorkTaskId " +
+            " JOIN Categories C on C.CategoryId=T.CategoryId " +
+            " WHERE WHERE T.StartDate >= @dateFrom and T.StartDate <= @dateTo";
+
+        var grid = await connection.QueryAsync<WorkTask>(sqlQuery, new { dateFrom = from, dateTo = to });
+        return PaginatedList<WorkTask>.Create(grid.ToList(), 0, 15);
     }
 }

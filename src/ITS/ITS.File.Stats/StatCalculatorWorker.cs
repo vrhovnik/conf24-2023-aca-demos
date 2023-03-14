@@ -1,3 +1,4 @@
+using ITS.Core;
 using ITS.Interfaces;
 using ITS.Models;
 
@@ -26,9 +27,11 @@ public class StatCalculatorWorker : BackgroundService
 
         logger.LogInformation("Getting tasks for the {CurrentDate}", DateTime.Now);
 
-        var tasksForToday = await workTaskRepository.GetTasksFromAsync(DateTime.Now.AddDays(-1),
-            DateTime.Now);
-
+        // var tasksForToday = await workTaskRepository.GetTasksFromAsync(DateTime.Now.AddDays(-1),
+        //     DateTime.Now);
+        var tasks = await workTaskRepository.GetAsync();
+        var tasksForToday = PaginatedList<WorkTask>.Create(tasks, 0, 15);
+        
         if (tasksForToday.Count == 0)
         {
             logger.LogInformation("No data received for {DateCalled}", DateTime.Now);
