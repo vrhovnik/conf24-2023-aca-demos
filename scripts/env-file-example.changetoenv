@@ -1,2 +1,5 @@
-﻿IPUTenantId=someguid
-IPUSubscriptionId=anotherguid
+﻿AppOptions__PageCount=10
+SqlOptions__ConnectionString=SQL Server Connection String
+AuthOptions__ApiKey=your api key
+AuthOptions__HashSalt=your hash to salt the values
+ApiOptions__ReportUrl=your report url
