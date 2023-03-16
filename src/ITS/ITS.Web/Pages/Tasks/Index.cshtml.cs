@@ -38,7 +38,7 @@ public class IndexPageModel : BasePageModel
         logger.LogInformation("Loaded {ItemCount} out of {AllCount} with {Query}. Generate Client URL.", WorkTasks.Count,
             WorkTasks.TotalPages, Query);
 
-        ReportApiPublicTasks = $"{apiOption.ReportApiUrl}/public-stats/pdf";
+        ReportApiPublicTasks = $"{apiOption.ReportApiUrl}/tasks-api-reports/public-stats/pdf";
         logger.LogInformation("Url to download API is {ReportPublicTaskUrl}", ReportApiPublicTasks);
         
         await Task.Delay(2000); //delaying result to prepare the environment

@@ -13,8 +13,8 @@ public class EnvPageModel : PageModel
     {
         logger.LogInformation("Loaded env page at {DateLoaded}", DateTime.Now);
         var environmentVariable = Environment.GetEnvironmentVariable("MESSAGE");
-        EnvValue = string.IsNullOrEmpty(environmentVariable) ? 
-            environmentVariable : "Environment variable is not set";
+        EnvValue = string.IsNullOrEmpty(environmentVariable) ? "Environment variable is not set" : 
+            environmentVariable;
     }
 
     [BindProperty]

@@ -212,16 +212,15 @@ public class TaskApiController : BaseSqlController
                         {
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.RelativeColumn(3);
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
+                                columns.ConstantColumn(120);
+                                columns.RelativeColumn(120);
+                                columns.ConstantColumn(120);
                             });
                             table.Header(header =>
                             {
-                                header.Cell().Element(CellStyle).Text("No. public tasks");
-                                header.Cell().Element(CellStyle).AlignRight().Text("No. closed tasks");
-                                header.Cell().Element(CellStyle).AlignRight().Text("No. comments");
+                                header.Cell().Element(CellStyle).Text("Public tasks");
+                                header.Cell().Element(CellStyle).AlignRight().Text("Closed tasks");
+                                header.Cell().Element(CellStyle).AlignRight().Text("Comments");
                                 static IContainer CellStyle(IContainer container) =>
                                     container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1)
                                         .BorderColor(Colors.Black);

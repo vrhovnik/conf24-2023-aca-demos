@@ -6,18 +6,6 @@ namespace ITS.Core;
 
 public static class StringExtensions
 {
-    /// <summary>
-    /// generating PDF url based on entry and user id
-    /// </summary>
-    /// <param name="webclientId">client id url</param>
-    /// <param name="userId">user identification</param>
-    /// <returns>absolute url to be able to download url or /task-api/download-pdf instead</returns>
-    /// <remarks>validation will be added later</remarks>
-    public static string GenerateUrlForPdfDownload(this string webclientId, string userId)
-    {
-        return $"{webclientId}/task-api/download-pdf/{{userId}}";
-    }
-
     private const string AllowableCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
 
     /// <summary>

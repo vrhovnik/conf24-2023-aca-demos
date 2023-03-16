@@ -61,7 +61,7 @@ public class DashboardPageModel : BasePageModel
                 logger.LogInformation("Got profile for {UniqueSettingsId} - ended at {DateEnd}", userId, DateTime.Now);
 
                 telemetryClient.TrackTrace(new TraceTelemetry($"pdf generation for user {userId}"));
-                PdfDownloadUrl = apiOptions.ReportApiUrl.GenerateUrlForPdfDownload(userViewModel.UserId);
+                PdfDownloadUrl = $"{apiOptions.ReportApiUrl}/tasks-api-reports/pdf/{userId}";
                 operation.Telemetry.Properties.Add("pdf-url", PdfDownloadUrl);
 
                 UserTasks = await workTaskRepository.WorkTasksForUserAsync(userId, currentPageNumber,
