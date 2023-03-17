@@ -60,7 +60,7 @@ builder.Services.AddTransient<IWorkTaskCommentRepository, WorkTaskCommentReposit
 var storageOptions = builder.Configuration.GetSection(SectionNameConsts.AzureStorageSectionName)
     .Get<AzureStorageOptions>();
 builder.Services.AddScoped<IWorkStatsRepository, BlobWorkStatsRepository>(_ =>
-    new BlobWorkStatsRepository(storageOptions.StorageConnectionString, storageOptions.Container,
+    new BlobWorkStatsRepository(storageOptions.ConnectionString, storageOptions.Container,
         storageOptions.FileName));
 builder.Services.AddScoped<IUserDataContext, UserDataContext>();
 

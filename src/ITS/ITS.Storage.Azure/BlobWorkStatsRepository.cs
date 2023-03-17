@@ -25,7 +25,9 @@ public class BlobWorkStatsRepository : IWorkStatsRepository
     {
         stats.DateCreated = DateTime.Now;
         var blobServiceClient = new BlobServiceClient(storageConnectionString);
-        BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
+        var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+        if (!await containerClient.ExistsAsync())
+             containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
 
         var workTaskStatsList = await GetAllAsync();
         if (workTaskStatsList.Exists(taskStats =>
@@ -42,7 +44,7 @@ public class BlobWorkStatsRepository : IWorkStatsRepository
             using var ms = new MemoryStream();
             ms.Write(bytes, 0, bytes.Length);
             ms.Position = 0;
-            await blobClient.UploadAsync(ms);
+            await blobClient.UploadAsync(ms, true);
         }
         catch (Exception e)
         {
@@ -56,16 +58,24 @@ public class BlobWorkStatsRepository : IWorkStatsRepository
     public async Task<List<WorkTaskStats>> GetAllAsync()
     {
         var blobServiceClient = new BlobServiceClient(storageConnectionString);
-        BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
+        var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+        if (!await containerClient.ExistsAsync())
+        {
+            await blobServiceClient.CreateBlobContainerAsync(containerName);
+            return new List<WorkTaskStats>();
+        }
         var blobClient = containerClient.GetBlobClient(fileName);
+        if (!await blobClient.ExistsAsync())
+            return new List<WorkTaskStats>();
         
         var downloadedContent = await blobClient.DownloadContentAsync();
         if (!downloadedContent.HasValue)
-            throw new Exception("Download was not successful");
+            return new List<WorkTaskStats>();
         
         var downloadedTaskList = Encoding.UTF8.GetString(downloadedContent.Value.Content);
         if (string.IsNullOrEmpty(downloadedTaskList))
-            throw new Exception("List is empty, check storage");
+            return new List<WorkTaskStats>();
+        
         var tasks = JsonConvert.DeserializeObject<List<WorkTaskStats>>(downloadedTaskList);
         return tasks;
     }

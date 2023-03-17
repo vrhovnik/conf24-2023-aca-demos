@@ -33,7 +33,7 @@ var host = Host.CreateDefaultBuilder(args)
         var storageConfig = hostContext.Configuration.GetSection(SectionNameConsts.AzureStorageSectionName)
             .Get<AzureStorageOptions>();
         services.AddScoped<IWorkStatsRepository, BlobWorkStatsRepository>(_ =>
-            new BlobWorkStatsRepository(storageConfig.StorageConnectionString, storageConfig.Container,
+            new BlobWorkStatsRepository(storageConfig.ConnectionString, storageConfig.Container,
                 storageConfig.FileName));
 
         Log.Logger = new LoggerConfiguration()

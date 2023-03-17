@@ -7,5 +7,5 @@ public static class SectionNameConsts
     public const string AuthOptionsSectionName = "AuthOptions";
     public const string ApiOptionsSectionName = "ApiOptions";
     public const string StorageOptionsSectionName = "StorageOptions";
-    public const string AzureStorageSectionName = "AzureStoragOptions";
+    public const string AzureStorageSectionName = "AzureStorageOptions";
 }
