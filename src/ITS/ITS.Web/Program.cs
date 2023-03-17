@@ -3,6 +3,7 @@ using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
 using ITS.Storage;
+using ITS.Storage.Azure;
 using ITS.Web.Base;
 using ITS.Web.Options;
 using ITS.Web.Services;
@@ -35,6 +36,10 @@ builder.Services.AddOptions<AuthOptions>()
     .Bind(builder.Configuration.GetSection(SectionNameConsts.AuthOptionsSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
+builder.Services.AddOptions<AzureStorageOptions>()
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.AzureStorageSectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 //adding interface mappings for services connecting to SQL
 var sqlOptions = builder.Configuration.GetSection(SectionNameConsts.SqlOptionsSectionName)
@@ -51,10 +56,12 @@ builder.Services.AddTransient<IProfileSettingsService, ProfileSettingsService>(_
     new ProfileSettingsService(sqlOptions.ConnectionString));
 builder.Services.AddTransient<IWorkTaskCommentRepository, WorkTaskCommentRepository>(_ =>
     new WorkTaskCommentRepository(sqlOptions.ConnectionString));
-var storageOptions = builder.Configuration.GetSection(SectionNameConsts.StorageOptionsSectionName)
-    .Get<StorageOptions>();
-builder.Services.AddTransient<IWorkStatsRepository, WorkStatsStorageRepository>(_ =>
-    new WorkStatsStorageRepository(storageOptions.FileName));
+
+var storageOptions = builder.Configuration.GetSection(SectionNameConsts.AzureStorageSectionName)
+    .Get<AzureStorageOptions>();
+builder.Services.AddScoped<IWorkStatsRepository, BlobWorkStatsRepository>(_ =>
+    new BlobWorkStatsRepository(storageOptions.StorageConnectionString, storageOptions.Container,
+        storageOptions.FileName));
 builder.Services.AddScoped<IUserDataContext, UserDataContext>();
 
 //adding system services
