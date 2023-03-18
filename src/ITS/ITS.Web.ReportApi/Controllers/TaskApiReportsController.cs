@@ -177,7 +177,28 @@ public class TaskApiController : BaseSqlController
             .GeneratePdf();
         return File(generatePdf, "application/pdf");
     }
-    
+
+    [Route("public-stats/most-active")]
+    [HttpGet]
+    [Produces(typeof(WorkTask))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetMostActiveTaskDetailsAsync()
+    {
+        var workTaskStatsList = await workStatsRepository.GetAllAsync();
+
+        if (workTaskStatsList == null)
+        {
+            logger.LogError("There is no data");
+            return BadRequest("No data");
+        }
+
+        var task = workTaskStatsList.MaxBy(stats => stats.DateCreated);
+        var detailedTask = await workTaskRepository.DetailsAsync(task.MostActiveTask.WorkTaskId);
+        return Ok(detailedTask);
+    }
+
     [Route("public-stats/pdf")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -192,7 +213,7 @@ public class TaskApiController : BaseSqlController
             logger.LogError("There is no data");
             return BadRequest("No data");
         }
-        
+
         var generatePdf = Document.Create(container =>
             {
                 container.Page(page =>

@@ -38,6 +38,13 @@
            type="text">
 </div>
 <div class="container mt-2">
+    @if (!string.IsNullOrEmpty(Model.MostActiveTask))
+        {
+            <div class="alert alert-info">
+                <h4 class="alert-heading">Most active task</h4>
+                <p>@Model.MostActiveTask</p>
+            </div>
+        }
     @await Html.PartialAsync("_WorkTasksList", Model.WorkTasks)
 </div>
 

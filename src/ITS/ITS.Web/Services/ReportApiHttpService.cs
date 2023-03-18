@@ -16,6 +16,7 @@ public class ReportApiHttpService
     private readonly HttpClient client;
     private readonly ILogger<ReportApiHttpService> logger;
     private readonly AuthOptions authOptions;
+
     private readonly AsyncCircuitBreakerPolicy<HttpResponseMessage> circuitBreakerPolicy =
         Policy<HttpResponseMessage>
             .Handle<HttpRequestException>()
@@ -30,6 +31,18 @@ public class ReportApiHttpService
         this.client.BaseAddress = new Uri(apiOptionsValue.Value.ReportApiUrl);
         authOptions = authOptionsValue.Value;
         this.client.DefaultRequestHeaders.Add(AuthOptions.ApiKeyHeaderName, authOptions.ApiKey);
+    }
+
+    public async Task<WorkTask> GetMostActiveTaskAsync()
+    {
+        logger.LogInformation("Calling service at {DateCalled}", DateTime.Now);
+        var responseMessage =
+            await client.GetAsync($"tasks-api-reports/public-stats/most-active");
+        responseMessage.EnsureSuccessStatusCode();
+        logger.LogInformation("Getting data, transforming to object.");
+        var mostActiveTaskJson = await responseMessage.Content.ReadAsStringAsync();
+        var mostActiveTask = JsonConvert.DeserializeObject<WorkTask>(mostActiveTaskJson);
+        return mostActiveTask;
     }
 
     public async Task<bool> IsServiceAliveAsync()
