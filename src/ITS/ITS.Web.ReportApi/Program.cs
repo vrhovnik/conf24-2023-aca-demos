@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
-using ITS.Storage.Azure;
+using ITS.Storage.Dapr;
 using ITS.Web.ReportApi.Authentication;
 using Microsoft.OpenApi.Models;
 
@@ -27,6 +27,10 @@ builder.Services.AddOptions<AzureStorageOptions>()
     .Bind(builder.Configuration.GetSection(SectionNameConsts.AzureStorageSectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
+builder.Services.AddOptions<DaprOptions>()
+    .Bind(builder.Configuration.GetSection(SectionNameConsts.DaprOptionsSectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 var sqlOptions = builder.Configuration.GetSection(SectionNameConsts.SqlOptionsSectionName)
     .Get<SqlOptions>();
@@ -37,11 +41,10 @@ builder.Services.AddTransient<IWorkTaskRepository, WorkTaskRepository>(_ =>
 builder.Services.AddTransient<IWorkTaskCommentRepository, WorkTaskCommentRepository>(_ =>
     new WorkTaskCommentRepository(sqlOptions.ConnectionString));
 
-var storageOptions = builder.Configuration.GetSection(SectionNameConsts.AzureStorageSectionName)
-    .Get<AzureStorageOptions>();
-builder.Services.AddScoped<IWorkStatsRepository, BlobWorkStatsRepository>(_ =>
-    new BlobWorkStatsRepository(storageOptions.ConnectionString, storageOptions.Container,
-        storageOptions.FileName));
+var storageOptions = builder.Configuration.GetSection(SectionNameConsts.DaprOptionsSectionName)
+    .Get<DaprOptions>();
+builder.Services.AddScoped<IWorkStatsRepository, DaprWorkStatsRepository>(_ =>
+    new DaprWorkStatsRepository(storageOptions.StoreName,storageOptions.Key));
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

@@ -17,6 +17,7 @@
       <ProjectReference Include="..\ITS.Interfaces\ITS.Interfaces.csproj" />
       <ProjectReference Include="..\ITS.SQL\ITS.SQL.csproj" />
       <ProjectReference Include="..\ITS.Storage.Azure\ITS.Storage.Azure.csproj" />
+      <ProjectReference Include="..\ITS.Storage.Dapr\ITS.Storage.Dapr.csproj" />
       <ProjectReference Include="..\ITS.Storage\ITS.Storage.csproj" />
     </ItemGroup>
 

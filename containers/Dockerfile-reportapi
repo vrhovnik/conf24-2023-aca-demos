@@ -6,6 +6,7 @@ COPY ["ITS/ITS.Interfaces/", "ITS.Interfaces/"]
 COPY ["ITS/ITS.Core/", "ITS.Core/"]
 COPY ["ITS/ITS.SQL/", "ITS.SQL/"]
 COPY ["ITS/ITS.Storage/", "ITS.Storage/"]
+COPY ["ITS/ITS.Dapr/", "ITS.Dapr/"]
 COPY ["ITS/ITS.Storage.Azure/", "ITS.Storage.Azure/"]
 COPY ["ITS/ITS.Web.ReportApi/", "ITS.Web.ReportApi/"]
 
@@ -15,6 +16,7 @@ RUN dotnet restore "ITS.Models/ITS.Models.csproj"
 RUN dotnet restore "ITS.Interfaces/ITS.Interfaces.csproj"
 RUN dotnet restore "ITS.SQL/ITS.SQL.csproj"
 RUN dotnet restore "ITS.Storage/ITS.Storage.csproj"
+RUN dotnet restore "ITS.Storage.Dapr/ITS.Storage.Dapr.csproj"
 RUN dotnet restore "ITS.Storage.Azure/ITS.Storage.Azure.csproj"
 RUN dotnet restore "ITS.Web.ReportApi/ITS.Web.ReportApi.csproj"
 
@@ -26,6 +28,7 @@ RUN dotnet restore "ITS.Models/ITS.Models.csproj"
 RUN dotnet restore "ITS.Interfaces/ITS.Interfaces.csproj"
 RUN dotnet restore "ITS.SQL/ITS.SQL.csproj"
 RUN dotnet restore "ITS.Storage/ITS.Storage.csproj"
+RUN dotnet restore "ITS.Storage.Dapr/ITS.Storage.Dapr.csproj"
 RUN dotnet restore "ITS.Storage.Azure/ITS.Storage.Azure.csproj"
 RUN dotnet restore "ITS.Web.ReportApi/ITS.Web.ReportApi.csproj"
 
@@ -35,6 +38,7 @@ RUN dotnet build "ITS.Interfaces/ITS.Interfaces.csproj" -c Release -o /ITS.Web.R
 RUN dotnet build "ITS.SQL/ITS.SQL.csproj" -c Release -o /ITS.Web.ReportApi
 RUN dotnet build "ITS.Storage.Azure/ITS.Storage.Azure.csproj" -c Release -o /ITS.Web.ReportApi
 RUN dotnet build "ITS.Storage/ITS.Storage.csproj" -c Release -o /ITS.Web.ReportApi
+RUN dotnet build "ITS.Storage.Dapr/ITS.Storage.Dapr.csproj" -c Release -o /ITS.Web.ReportApi
 RUN dotnet build "ITS.Web.ReportApi/ITS.Web.ReportApi.csproj" -c Release -o /app
 
 FROM build AS publish

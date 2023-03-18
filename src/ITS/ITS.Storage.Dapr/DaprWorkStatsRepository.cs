@@ -51,7 +51,8 @@ public class DaprWorkStatsRepository : IWorkStatsRepository
             using var client = new DaprClientBuilder().Build();
             var result = await client.GetStateAsync<string>(daprStore, fileName);
             if (string.IsNullOrEmpty(result))
-                throw new Exception("List is empty, check storage");
+                return new List<WorkTaskStats>();
+            
             var tasks = JsonConvert.DeserializeObject<List<WorkTaskStats>>(result);
             return tasks;
         }
