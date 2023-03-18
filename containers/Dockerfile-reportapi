@@ -6,7 +6,7 @@ COPY ["ITS/ITS.Interfaces/", "ITS.Interfaces/"]
 COPY ["ITS/ITS.Core/", "ITS.Core/"]
 COPY ["ITS/ITS.SQL/", "ITS.SQL/"]
 COPY ["ITS/ITS.Storage/", "ITS.Storage/"]
-COPY ["ITS/ITS.Dapr/", "ITS.Dapr/"]
+COPY ["ITS/ITS.Storage.Dapr/", "ITS.Storage.Dapr/"]
 COPY ["ITS/ITS.Storage.Azure/", "ITS.Storage.Azure/"]
 COPY ["ITS/ITS.Web.ReportApi/", "ITS.Web.ReportApi/"]
 

@@ -4,6 +4,7 @@ using ITS.Interfaces;
 using ITS.SQL;
 using ITS.Storage;
 using ITS.Storage.Azure;
+using ITS.Storage.Dapr;
 using Serilog;
 
 var host = Host.CreateDefaultBuilder(args)
@@ -30,11 +31,10 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IWorkTaskRepository, WorkTaskRepository>(_ =>
             new WorkTaskRepository(sqlConfig.ConnectionString));
 
-        var storageConfig = hostContext.Configuration.GetSection(SectionNameConsts.AzureStorageSectionName)
-            .Get<AzureStorageOptions>();
-        services.AddScoped<IWorkStatsRepository, BlobWorkStatsRepository>(_ =>
-            new BlobWorkStatsRepository(storageConfig.ConnectionString, storageConfig.Container,
-                storageConfig.FileName));
+        var storageConfig = hostContext.Configuration.GetSection(SectionNameConsts.DaprOptionsSectionName)
+            .Get<DaprOptions>();
+        services.AddScoped<IWorkStatsRepository, DaprWorkStatsRepository>(_ =>
+            new DaprWorkStatsRepository(storageConfig.StoreName, storageConfig.Key));
 
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console(
