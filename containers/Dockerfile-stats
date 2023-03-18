@@ -6,6 +6,7 @@ COPY ["ITS/ITS.Core/", "ITS.Core/"]
 COPY ["ITS/ITS.Interfaces/", "ITS.Interfaces/"]
 COPY ["ITS/ITS.SQL/", "ITS.SQL/"]
 COPY ["ITS/ITS.Storage/", "ITS.Storage/"]
+COPY ["ITS/ITS.Storage.Dapr/", "ITS.Storage.Dapr/"]
 COPY ["ITS/ITS.Storage.Azure/", "ITS.Storage.Azure/"]
 COPY ["ITS/ITS.File.Stats/", "ITS.File.Stats/"]
 
@@ -18,6 +19,7 @@ RUN dotnet restore "ITS.Models/ITS.Models.csproj"
 RUN dotnet restore "ITS.Interfaces/ITS.Interfaces.csproj"
 RUN dotnet restore "ITS.SQL/ITS.SQL.csproj"
 RUN dotnet restore "ITS.Storage/ITS.Storage.csproj"
+RUN dotnet restore "ITS.Storage.Dapr/ITS.Storage.Dapr.csproj"
 RUN dotnet restore "ITS.Storage.Azure/ITS.Storage.Azure.csproj"
 RUN dotnet restore "ITS.File.Stats/ITS.File.Stats.csproj"
 

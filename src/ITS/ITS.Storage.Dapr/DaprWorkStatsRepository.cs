@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
-using Dapr.Client;
+﻿using Dapr.Client;
 using ITS.Core;
 using ITS.Interfaces;
 using ITS.Models;
@@ -21,46 +19,24 @@ public class DaprWorkStatsRepository : IWorkStatsRepository
 
     public async Task<bool> GenerateStatsAsync(WorkTaskStats stats)
     {
-        try
-        {
-            using var client = new DaprClientBuilder().Build();
-            var workTaskStatsList = await GetAllAsync();
-            if (workTaskStatsList == null)
-                workTaskStatsList = new List<WorkTaskStats>();
-            
-            if (workTaskStatsList.Exists(taskStats =>
-                    taskStats.DateCreated.ToShortDateString() == stats.DateCreated.ToShortDateString()))
-                return false;
-            
-            workTaskStatsList.Add(stats);
-            var allTasksToSave = JsonConvert.SerializeObject(workTaskStatsList);
-            await client.SaveStateAsync(daprStore, fileName, allTasksToSave);
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);
+        using var client = new DaprClientBuilder().Build();
+        var workTaskStatsList = await GetAllAsync();
+
+        if (workTaskStatsList.Exists(taskStats =>
+                taskStats.DateCreated.ToShortDateString() == stats.DateCreated.ToShortDateString()))
             return false;
-        }
+
+        workTaskStatsList.Add(stats);
+        await client.SaveStateAsync(daprStore, fileName, workTaskStatsList);
+        
         return true;
     }
 
     public async Task<List<WorkTaskStats>> GetAllAsync()
     {
-        try
-        {
-            using var client = new DaprClientBuilder().Build();
-            var result = await client.GetStateAsync<string>(daprStore, fileName);
-            if (string.IsNullOrEmpty(result))
-                return new List<WorkTaskStats>();
-            
-            var tasks = JsonConvert.DeserializeObject<List<WorkTaskStats>>(result);
-            return tasks;
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);
-            return null;
-        }
+        using var client = new DaprClientBuilder().Build();
+        var result = await client.GetStateAsync<List<WorkTaskStats>>(daprStore, fileName);
+        return result;
     }
 
     public async Task<PaginatedList<WorkTaskStats>> GetStatsAsync(DateTime from, DateTime to)
