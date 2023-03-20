@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using ITS.Core;
 using ITS.Interfaces;
 using ITS.SQL;
+using ITS.Storage.Azure;
 using ITS.Storage.Dapr;
 using ITS.Web.ReportApi.Authentication;
 using Microsoft.OpenApi.Models;
